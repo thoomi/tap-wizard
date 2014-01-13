@@ -1,14 +1,13 @@
-
 /**
  * Module dependencies.
  */
 
 var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
-var fs = require('fs');
-var path = require('path');
+var app     = express();
+var server  = require('http').createServer(app);
+var io      = require('socket.io').listen(server);
+var fs      = require('fs');
+var path    = require('path');
 //add your api items here - see app.get below
 var sample = require('./api/sample')(io);
 
