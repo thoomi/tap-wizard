@@ -8,6 +8,9 @@ var server  = require('http').createServer(app);
 var io      = require('socket.io').listen(server);
 var fs      = require('fs');
 var path    = require('path');
+// Import game files
+var game = require('./game/game.js')
+
 //add your api items here - see app.get below
 var sample = require('./api/sample')(io);
 
@@ -45,6 +48,7 @@ server.listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
 
+// Listen for Socket.IO Connections. Once connected, start the game logic.
 io.sockets.on('connection', function (socket) {
-    console.log('connected');
+    game.initGame(io, socket);
 });

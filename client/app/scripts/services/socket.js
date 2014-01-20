@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('clientApp')
-  .factory('socket', function ($rootScope) {
+ .factory('socket', function ($rootScope) {
         var socket = io.connect('http://localhost:3000');
         return {
             on: function (eventName, callback) {
-                debugger;
                 socket.on(eventName, function () {
                     var args = arguments;
                     $rootScope.$apply(function () {
@@ -22,6 +21,9 @@ angular.module('clientApp')
                         }
                     });
                 })
+            },
+            removeAllListeners: function() {
+              socket.removeAllListeners();
             }
         };
   });
