@@ -1,13 +1,5 @@
 <div class="hero-unit">
-  <h1>'Allo, 'Allo!</h1>
-  <p>You now have</p>
-  <ul>
-      <li ng-repeat="thing in awesomeThings">{{thing}}</li>
-  </ul>
-  <p>installed.</p>
-  <h3>Enjoy coding! - Yeoman</h3>
+  <a href="#/hostgame" class="btn btn-primary btn-large btn-block">{{ game.start }}</a>
+  <hr>
+  <a href="#/joingame" class="btn btn-primary btn-large btn-block">{{ game.join }}</a>
 </div>
-        <div class="hero-unit">
-            <p>Get call returns: {{data.test}}</p>
-            <p>Socket listener says: {{socketdata.test}}  <br/>(open another browser or hit the api/sample endpoint with get call)</p>
-        </div>
