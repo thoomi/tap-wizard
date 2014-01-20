@@ -1,0 +1,8 @@
+<div class="hero-unit">
+  <h2>Game ID: {{ game.id }}</h1>
+  <p class="text-center">{{ game.wait }}</p>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="player in game.players">{{ player.playerName }}</li>
+  </ul>
+  <a href="#/startgame" class="btn btn-primary btn-block">{{ game.play | uppercase }}</a>
+</div>
