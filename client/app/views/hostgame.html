@@ -1,8 +1,7 @@
 <div class="hero-unit">
-  <h2>Game ID: {{ game.id }}</h1>
-  <p class="text-center">{{ game.wait }}</p>
-  <ul class="list-group">
-    <li class="list-group-item" ng-repeat="player in game.players">{{ player.playerName }}</li>
-  </ul>
-  <a href="#/startgame" class="btn btn-primary btn-block">{{ game.play | uppercase }}</a>
+  <h6>Game ID: {{ gameId }}   |  Players: <strong ng-repeat="player in players">{{ player.playerName }}, </strong></h6>
+  <h6>Round: {{ round.current }} / {{ round.max }}</h6>
+
+  <p>Played cards:</p>
+  <ul><li ng-repeat="card in cards">{{ card.color }} {{ card.value }}</li></ul>
 </div>

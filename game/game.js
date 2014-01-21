@@ -14,8 +14,8 @@ exports.initGame = function(sio, socket){
 
     // Host Events
     gameSocket.on('hostCreateNewGame', hostCreateNewGame);
-    gameSocket.on('hostRoomFull', hostPrepareGame);
-    gameSocket.on('hostNextRound', hostNextRound);
+    gameSocket.on('hostIsReady', hostPrepareGame);
+    gameSocket.on('hostDistributeCards', hostDistributeCards);
 
     // Player Events
     gameSocket.on('playerJoinGame', playerJoinGame);
@@ -34,7 +34,8 @@ exports.initGame = function(sio, socket){
 */
 function hostCreateNewGame() {
     // Create a unique Socket.IO Room
-    var thisGameId = ( Math.random() * 100 ) | 0;
+    //var thisGameId = ( Math.random() * 100 ) | 0;
+    var thisGameId = 1;
 
     // Return the Room ID (gameId) and the socket ID (mySocketId) to the browser client
     this.emit('newGameCreated', {gameId: thisGameId, mySocketId: this.id});
@@ -44,7 +45,7 @@ function hostCreateNewGame() {
 };
 
 /*
-* Two players have joined. Alert the host!
+* Enough players have joined! Start the game.
 * @param gameId The game ID / room ID
 */
 function hostPrepareGame(gameId) {
@@ -61,8 +62,31 @@ function hostPrepareGame(gameId) {
 * All cards for a round are played and the host attempts to start the next round
 * @param data Sent from the client. Contains the current round and gameId (room)
 */
-function hostNextRound(data) {
-    
+function hostDistributeCards(data) {
+    var sock = this;
+    var clients   = io.sockets.clients(data.gameId);
+
+    var cardStack = fullCardStack.slice();
+
+    shuffleArray(cardStack);
+
+    var counter    = 0;
+    var nextPlayer = true;
+    for(var indexOfClient = 0; indexOfClient < clients.length; indexOfClient++) {
+        // If the client is not the host send him cards
+        if (clients[indexOfClient].id !== sock.id) {
+            var cards = [];
+
+            // Send as many cards as for the current round needed
+            for (var indexOfCard = 0; indexOfCard < data.round; indexOfCard++) {
+                cards.push(cardStack[counter * data.round + indexOfCard]);
+            }
+
+            clients[indexOfClient].emit('newHandCards', cards);
+
+            counter++;
+        }
+    }
 }
 
 
@@ -96,9 +120,11 @@ function playerJoinGame(data) {
         // Emit an event notifying the clients that the player has joined the room.
         io.sockets.in(data.gameId).emit('playerJoinedRoom', data);
 
+        sock.emit('playerJoinSuccess', sock.id);
+
     } else {
         // Otherwise, send an error message back to the player.
-        this.emit('error',{message: "This room does not exist."} );
+        sock.emit('error',{message: "This room does not exist."} );
     }
 }
 
@@ -107,7 +133,8 @@ function playerJoinGame(data) {
 * @param data gameId
 */
 function playerThrowCard(data) {
-
+    // Push thrown card to host
+    io.sockets.in(data.gameId).emit('playerHasThrownCard', data.card);
 }
 
 function playerDisconnect() {
@@ -120,3 +147,103 @@ function playerDisconnect() {
        io.sockets.in(room).emit('playerLeftRoom', sock.id);
    }
 }
+
+
+/* *****************************
+* *
+* GAME LOGIC FUNCTIONS *
+* *
+***************************** */
+var fullCardStack =
+[
+    { color: 'red', value: 1 },
+    { color: 'red', value: 2 },
+    { color: 'red', value: 3 },
+    { color: 'red', value: 4 },
+    { color: 'red', value: 5 },
+    { color: 'red', value: 6 },
+    { color: 'red', value: 7 },
+    { color: 'red', value: 8 },
+    { color: 'red', value: 9 },
+    { color: 'red', value: 10 },
+    { color: 'red', value: 11 },
+    { color: 'red', value: 12 },
+    { color: 'red', value: 13 },
+
+    { color: 'green', value: 1 },
+    { color: 'green', value: 2 },
+    { color: 'green', value: 3 },
+    { color: 'green', value: 4 },
+    { color: 'green', value: 5 },
+    { color: 'green', value: 6 },
+    { color: 'green', value: 7 },
+    { color: 'green', value: 8 },
+    { color: 'green', value: 9 },
+    { color: 'green', value: 10 },
+    { color: 'green', value: 11 },
+    { color: 'green', value: 12 },
+    { color: 'green', value: 13 },
+
+    { color: 'blue', value: 1 },
+    { color: 'blue', value: 2 },
+    { color: 'blue', value: 3 },
+    { color: 'blue', value: 4 },
+    { color: 'blue', value: 5 },
+    { color: 'blue', value: 6 },
+    { color: 'blue', value: 7 },
+    { color: 'blue', value: 8 },
+    { color: 'blue', value: 9 },
+    { color: 'blue', value: 10 },
+    { color: 'blue', value: 11 },
+    { color: 'blue', value: 12 },
+    { color: 'blue', value: 13 },
+
+    { color: 'yellow', value: 1 },
+    { color: 'yellow', value: 2 },
+    { color: 'yellow', value: 3 },
+    { color: 'yellow', value: 4 },
+    { color: 'yellow', value: 5 },
+    { color: 'yellow', value: 6 },
+    { color: 'yellow', value: 7 },
+    { color: 'yellow', value: 8 },
+    { color: 'yellow', value: 9 },
+    { color: 'yellow', value: 10 },
+    { color: 'yellow', value: 11 },
+    { color: 'yellow', value: 12 },
+    { color: 'yellow', value: 13 },
+
+    { color: 'wizard', value: 99 },
+    { color: 'wizard', value: 99 },
+    { color: 'wizard', value: 99 },
+    { color: 'wizard', value: 99 },
+
+    { color: 'fool', value: 0 },
+    { color: 'fool', value: 0 },
+    { color: 'fool', value: 0 },
+    { color: 'fool', value: 0 },
+];
+
+////////////////////////////////////////////////////////////////////////////////
+/// Simple helper function to shuffle an array
+////////////////////////////////////////////////////////////////////////////////
+function shuffleArray(_array) {
+    'use strict';
+    for (var index = _array.length - 1; index >= 1; index--)
+    {
+        var randomIndex = createRandomNumber(0, index);
+
+        // Swap
+        var tmp             = _array[index];
+        _array[index]       = _array[randomIndex];
+        _array[randomIndex] = tmp;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+/// Simple helper function to create a random number between _low and _high boundaries
+////////////////////////////////////////////////////////////////////////////////
+function createRandomNumber(_low, _high) {
+    "use strict";
+    _high++;
+    return Math.floor((Math.random() * (_high - _low) + _low));
+};

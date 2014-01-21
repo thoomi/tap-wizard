@@ -11,13 +11,17 @@ angular.module('clientApp', [])
         templateUrl: 'views/joingame.html',
         controller: 'JoingameCtrl'
       })
-      .when('/hostgame', {
-        templateUrl: 'views/hostgame.html',
-        controller: 'HostgameCtrl'
+      .when('/creategame', {
+        templateUrl: 'views/creategame.html',
+        controller: 'CreategameCtrl'
       })
       .when('/playergame', {
         templateUrl: 'views/playergame.html',
         controller: 'PlayergameCtrl'
+      })
+      .when('/hostgame', {
+        templateUrl: 'views/hostgame.html',
+        controller: 'HostgameCtrl'
       })
       .otherwise({
         redirectTo: '/'

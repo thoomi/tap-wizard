@@ -7,7 +7,7 @@ angular.module('clientApp')
 
     // Public API here
     return {
-        playerName: playerName,
-        gameId: gameId
+        playerName : playerName,
+        gameId     : gameId
       };
   });

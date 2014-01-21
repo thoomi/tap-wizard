@@ -1,1 +1,5 @@
-<p>This is the playergame view.</p>
+<ul>
+  <li ng-repeat="card in cards" style="color: {{ card.color }};">{{ card.color }} {{ card.value }}
+    <button ng-click="throwCard(card)">Throw</button>
+  </li>
+</ul>

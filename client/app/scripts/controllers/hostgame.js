@@ -1,48 +1,22 @@
 'use strict';
 
 angular.module('clientApp')
-  .controller('HostgameCtrl', function ($scope, socket) {
+  .controller('HostgameCtrl', function ($scope, socket, hostGameData) {
+    $scope.gameId       = hostGameData.gameId;
+    $scope.players      = hostGameData.players;
+    $scope.cards        = [];
+    var numberOfPlayers = hostGameData.players.length;
+    $scope.round        = { current: 1, max: hostGameData.maxNumberOfCards / numberOfPlayers };
 
-    $scope.game = {
-      wait: 'Waiting for players.',
-      play: 'Start',
-      players : []
-    };
-
-    // Setup event listeners
-    socket.on('connected', onConnected);
-    socket.on('newGameCreated', onNewGameCreated);
-    socket.on('playerJoinedRoom', onPlayerJoinedGame);
-    socket.on('playerLeftRoom', onPlayerLeftGame);
-
-
-    // Let the server know we want to create a new game
-    socket.emit('hostCreateNewGame');
-
-    // Listeners
-    function onConnected(data) {
-      console.log('Websocket connected');
-    };
-
-    function onNewGameCreated(data) {
-      $scope.game.id = data.gameId;
-    }
-
-    function onPlayerJoinedGame(data) {
-      $scope.game.players.push(data);
-      console.log(data);
-    }
-
-    function onPlayerLeftGame(data) {
-      for (var indexOfPlayer = 0; indexOfPlayer < $scope.game.players.length; indexOfPlayer++) {
-        if ($scope.game.players[indexOfPlayer].mySocketId === data) {
-          $scope.game.players.splice(indexOfPlayer, 1);
-        };
-      };
-    }
-
-    // Remove all socket listeners when the controller is destroyed
-    $scope.$on('$destroy', function (event) {
-        socket.removeAllListeners();
+    socket.on('playerHasThrownCard', function(card) {
+      $scope.cards.push(card);
     });
+
+
+    function startRound(numberOfRound) {
+      socket.emit('hostDistributeCards', { round : numberOfRound, numberOfPlayers : numberOfPlayers, gameId : hostGameData.gameId });
+    }
+
+    startRound(5);
+
   });
