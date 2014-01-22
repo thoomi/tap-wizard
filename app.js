@@ -9,7 +9,7 @@ var io      = require('socket.io').listen(server);
 var fs      = require('fs');
 var path    = require('path');
 // Import game files
-var game = require('./game/game.js')
+var gameserver = require('./game/gameserver.js');
 
 //add your api items here - see app.get below
 var sample = require('./api/sample')(io);
@@ -50,5 +50,5 @@ server.listen(app.get('port'), function(){
 
 // Listen for Socket.IO Connections. Once connected, start the game logic.
 io.sockets.on('connection', function (socket) {
-    game.initGame(io, socket);
+    gameserver.initGameServer(io, socket);
 });

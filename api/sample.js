@@ -1,4 +1,4 @@
-function Sample(io){
+function Sample(io) {
     this.get = function(req, res){
         var data = {
             test: "sample data"
