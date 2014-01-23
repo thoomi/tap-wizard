@@ -11,8 +11,8 @@ angular.module('clientApp')
     $scope.cards = [];
     $scope.notification = "Waiting for the host to start the game!"
 
-    socket.on('newHandCards', function(data) {
-      $scope.cards = data;
+    socket.on('newHandCard', function(card) {
+      $scope.cards.push(card);
     });
 
     socket.on('beginNewGame', function(data) {

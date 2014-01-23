@@ -7,8 +7,6 @@ angular.module('clientApp')
     $scope.cards        = [];
     $scope.round        = { current: hostGameData.currentRound, max: hostGameData.maxRounds };
 
-    var numberOfPlayers = hostGameData.players.length;
-
     socket.on('playerHasThrownCard', function(card) {
       $scope.cards.push(card);
     });

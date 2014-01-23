@@ -10,10 +10,14 @@ exports.Player = function(socket, gameId, name) {
     var m_name       = name;
     var m_setOfCards = [];
     var m_score      = 0;
+    var m_guessedTricks = 0;
+    var m_currentTricks = 0;
 
 
     function addCard(card) {
         m_setOfCards.push(card);
+        // Also update the players browser
+        m_socket.emit('newHandCard', card);
     }
     function removeCard(card) {
         for (var indexOfCard = 0; indexOfCard < m_setOfCards.length; indexOfCard++) {

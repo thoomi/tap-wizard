@@ -18,7 +18,6 @@ exports.initGameServer = function(sio, socket) {
     // Host Events
     socket.on('hostCreateNewGame', hostCreateNewGame);
     socket.on('hostPrepareGame', hostPrepareGame);
-    socket.on('hostDistributeCards', hostDistributeCards);
 
     // Player Events
     socket.on('playerJoinGame', playerJoinGame);
@@ -67,40 +66,9 @@ function hostPrepareGame(gameId) {
 
     var data = { maxRounds : gameTable.getNumberOfRounds() };
 
-    console.log(gameTable);
-
     io.sockets.in(gameId).emit('beginNewGame', data);
-}
 
-/**
-* All cards for a round are played and the host attempts to start the next round
-* @param data Sent from the client. Contains the current round and gameId (room)
-*/
-function hostDistributeCards(data) {
-    var sock = this;
-    var clients   = io.sockets.clients(data.gameId);
-
-    var cardStack = fullCardStack.slice();
-
-    shuffleArray(cardStack);
-
-    var counter    = 0;
-    var nextPlayer = true;
-    for(var indexOfClient = 0; indexOfClient < clients.length; indexOfClient++) {
-        // If the client is not the host send him cards
-        if (clients[indexOfClient].id !== sock.id) {
-            var cards = [];
-
-            // Send as many cards as for the current round needed
-            for (var indexOfCard = 0; indexOfCard < data.round; indexOfCard++) {
-                cards.push(cardStack[counter * data.round + indexOfCard]);
-            }
-
-            clients[indexOfClient].emit('newHandCards', cards);
-
-            counter++;
-        }
-    }
+    gameTable.dealCards();
 }
 
 

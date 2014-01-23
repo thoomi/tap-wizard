@@ -1,4 +1,4 @@
-var Util = require('./util.js');
+var util = require('./util.js');
 var Card = require('./card.js').Card;
 
 exports.Deck = function() {
@@ -73,11 +73,11 @@ exports.Deck = function() {
     ];
 
     function shuffle() {
-        Util.shuffleArray(m_deckOfCards);
+        util.shuffleArray(m_deckOfCards);
     }
 
     return {
-        deckOfCards   : m_deckOfCards,
+        cards         : m_deckOfCards,
         numberOfCards : m_deckOfCards.length,
         shuffle       : shuffle
     }
