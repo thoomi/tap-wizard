@@ -9,8 +9,8 @@ angular.module('clientApp')
       gameData.gameId = $scope.gameId;
 
       // Test values
-      gameData.playerName = 'Heinz';
-      gameData.gameId     = 1;
+      //gameData.playerName = 'Heinz';
+      //gameData.gameId     = 1;
 
 
       // Send the connect to game message

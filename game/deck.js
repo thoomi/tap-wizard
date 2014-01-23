@@ -1,5 +1,5 @@
 var Util = require('./util.js');
-var Card = require('./card.js'); 
+var Card = require('./card.js').Card;
 
 exports.Deck = function() {
     'use strict';
@@ -71,13 +71,14 @@ exports.Deck = function() {
         Card('fool', 0),
         Card('fool', 0)
     ];
-    
+
     function shuffle() {
         Util.shuffleArray(m_deckOfCards);
     }
 
     return {
-        deckOfCards : m_deckOfCards,
-        shuffle     : shuffle
+        deckOfCards   : m_deckOfCards,
+        numberOfCards : m_deckOfCards.length,
+        shuffle       : shuffle
     }
 };

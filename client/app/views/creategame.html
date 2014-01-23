@@ -4,5 +4,5 @@
   <ul class="list-group">
     <li class="list-group-item" ng-repeat="player in game.players">{{ player.playerName }}</li>
   </ul>
-  <a href="#/hostgame" class="btn btn-primary btn-block">{{ game.play | uppercase }}</a>
+  <button ng-click="prepareGameForPlay()" class="btn btn-primary btn-block">{{ game.play | uppercase }}</button>
 </div>

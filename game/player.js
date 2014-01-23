@@ -1,15 +1,16 @@
-exports.Player = function(socketId, gameId, name) {
+exports.Player = function(socket, gameId, name) {
     'use strict';
 
-    if (typeof(socketId) === 'undefined') { throw "Parameter socketId is not defined!"; }
+    if (typeof(socket) === 'undefined') { throw "Parameter socket is not defined!"; }
     if (typeof(gameId) === 'undefined') { throw "Parameter gameId is not defined!"; }
     if (typeof(name) === 'undefined') { throw "Parameter name is not defined!"; }
 
-    var m_socketId   = socketId;
+    var m_socket     = socket;
     var m_gameId     = gameId
     var m_name       = name;
     var m_setOfCards = [];
     var m_score      = 0;
+
 
     function addCard(card) {
         m_setOfCards.push(card);
@@ -30,7 +31,7 @@ exports.Player = function(socketId, gameId, name) {
     }
 
     return {
-        socketId   : m_socketId;
+        socket     : m_socket,
         gameId     : m_gameId,
         name       : m_name,
         score      : m_score,

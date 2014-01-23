@@ -9,10 +9,16 @@ angular.module('clientApp')
     // ];
 
     $scope.cards = [];
+    $scope.notification = "Waiting for the host to start the game!"
 
     socket.on('newHandCards', function(data) {
       $scope.cards = data;
     });
+
+    socket.on('beginNewGame', function(data) {
+      $scope.notification = "Game is running!";
+    });
+
 
     $scope.throwCard = function(card) {
       console.log('Throw: ' + card.color + ' ' + card.value);
@@ -20,6 +26,7 @@ angular.module('clientApp')
       var data = { gameId : gameData.gameId, card : card };
       socket.emit('playerThrowCard', data);
     }
+
 
     // Remove all socket listeners when the controller is destroyed
     $scope.$on('$destroy', function (event) {

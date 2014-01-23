@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clientApp')
-  .controller('CreategameCtrl', function ($scope, socket, hostGameData) {
+  .controller('CreategameCtrl', function ($scope, $location, socket, hostGameData) {
 
     $scope.game = {
       wait: 'Waiting for players.',
@@ -19,12 +19,12 @@ angular.module('clientApp')
       hostGameData.gameId = data.gameId;
     });
 
-    socket.on('playerJoinedRoom', function(data) {
+    socket.on('playerJoinedGame', function(data) {
       $scope.game.players.push(data);
       hostGameData.players.push(data);
     });
 
-    socket.on('playerLeftRoom', function(data) {
+    socket.on('playerLeftGame', function(data) {
       for (var indexOfPlayer = 0; indexOfPlayer < $scope.game.players.length; indexOfPlayer++) {
         if ($scope.game.players[indexOfPlayer].mySocketId === data) {
           $scope.game.players.splice(indexOfPlayer, 1);
@@ -32,7 +32,16 @@ angular.module('clientApp')
       };
     });
 
+    socket.on('beginNewGame', function(data) {
+      hostGameData.maxRounds = data.maxRounds;
 
+      $location.path('hostgame');
+    });
+
+
+    $scope.prepareGameForPlay = function() {
+      socket.emit('hostPrepareGame', hostGameData.gameId);
+    };
 
     // Let the server know we want to create a new game
     socket.emit('hostCreateNewGame');
