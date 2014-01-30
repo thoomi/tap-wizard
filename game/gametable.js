@@ -103,6 +103,8 @@ exports.GameTable = function(gameId, hostSocket) {
                 }
             }
         }
+
+        return true;
     }
 
     function playCard(card, socketId) {
@@ -142,12 +144,12 @@ exports.GameTable = function(gameId, hostSocket) {
         var winnerCard = null;
 
         for (var indexOfCard = 0; indexOfCard < m_cardsOnTable.length; indexOfCard++) {
-            if (m_cardsOnTable[indexOfCard] == 'wizard') {
+            if (m_cardsOnTable[indexOfCard].color == 'wizard') {
                 // Wizard detected
                 setTrickWinner(m_cardsOnTable[indexOfCard].playerSocketId);
                 return;
             }
-            else if (m_cardsOnTable[indexOfCard] == 'fool') {
+            else if (m_cardsOnTable[indexOfCard].color == 'fool') {
                 // Do nothing and check the next card
                 foolCount++;
                 if (m_cardsOnTable.length === foolCount) {
