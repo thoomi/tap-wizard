@@ -6,8 +6,19 @@ angular.module('clientApp')
     $scope.players      = hostGameData.players;
     $scope.cards        = [];
     $scope.round        = { current: hostGameData.currentRound, max: hostGameData.maxRounds };
+    $scope.trickwinner  = '';
+    $scope.trumpCard    = '';
 
     socket.on('playerHasThrownCard', function(card) {
       $scope.cards.push(card);
     });
+
+    socket.on('newTrumpCard', function(card) {
+      $scope.trumpCard = card;
+    });
+
+    socket.on('playerHasWonTrick', function(name) {
+      $scope.trickwinner = name;
+      $scope.cards = [];
+    })
 });

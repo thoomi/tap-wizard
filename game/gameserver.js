@@ -40,12 +40,11 @@ function hostCreateNewGame() {
 
     // Create a unique Socket.IO Room / GameId
     // TODO: Develop a proper way to generate a unique gameId
-    var newGameId = ( Math.random() * 100 ) | 0;
-    //var newGameId = '1';
+    //var newGameId = ( Math.random() * 100 ) | 0;
+    var newGameId = '1';
 
     // Create a new game table
-    gameTables[newGameId] = new GameTable(newGameId);
-    gameTables[newGameId].hostSocket = hostSocket;
+    gameTables[newGameId] = new GameTable(newGameId, hostSocket);
 
     // Join the specific room for the game
     hostSocket.join(newGameId.toString());
@@ -117,14 +116,24 @@ function playerJoinGame(data) {
     }
 }
 
-/**
-* A player has thrown in a new card.
-* @param data gameId
-*/
+
+
 function playerThrowCard(data) {
-    // Push thrown card to host
-    io.sockets.in(data.gameId).emit('playerHasThrownCard', data.card);
+    // A reference to the player's Socket.IO socket object
+    var playerSocket = this;
+
+    var gameTable = gameTables[data.gameId];
+
+    if (gameTable != undefined) {
+        if (gameTable.isCardAllowed(data.card, playerSocket.id)) {
+            gameTable.playCard(data.card, playerSocket.id);
+        }
+        else {
+            playerSocket.emit('cardNotAllowed', data.card);
+        }
+    }
 }
+
 
 /**
 * A player or the host disconnected

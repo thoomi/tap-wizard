@@ -5,19 +5,17 @@ exports.Player = function(socket, gameId, name) {
     if (typeof(gameId) === 'undefined') { throw "Parameter gameId is not defined!"; }
     if (typeof(name) === 'undefined') { throw "Parameter name is not defined!"; }
 
-    var m_socket     = socket;
-    var m_gameId     = gameId
-    var m_name       = name;
-    var m_setOfCards = [];
-    var m_score      = 0;
+    var m_socket        = socket;
+    var m_gameId        = gameId;
+    var m_name          = name;
+    var m_setOfCards    = [];
+    var m_score         = 0;
     var m_guessedTricks = 0;
     var m_currentTricks = 0;
 
 
     function addCard(card) {
         m_setOfCards.push(card);
-        // Also update the players browser
-        m_socket.emit('newHandCard', card);
     }
     function removeCard(card) {
         for (var indexOfCard = 0; indexOfCard < m_setOfCards.length; indexOfCard++) {
@@ -34,12 +32,41 @@ exports.Player = function(socket, gameId, name) {
         m_score -= parseInt(points);
     }
 
+    function setGuessedTricks(guessedNumber) {
+        m_guessedTricks = parseInt(guessedNumber);
+    }
+    function addTrick() {
+        m_currentTricks++;
+    }
+    function clearTricks() {
+        m_guessedTricks = 0;
+        m_currentTricks = 0;
+    }
+
+    function getCurrentTricks() {
+        return m_currentTricks;
+    }
+    function getGuessedTricks() {
+        return m_guessedTricks;
+    }
+
+    function getCards() {
+        return m_setOfCards;
+    }
+
     return {
-        socket     : m_socket,
-        gameId     : m_gameId,
-        name       : m_name,
-        score      : m_score,
-        addCard    : addCard,
-        removeCard : removeCard
+        socket           : m_socket,
+        gameId           : m_gameId,
+        name             : m_name,
+        addCard          : addCard,
+        removeCard       : removeCard,
+        addTrick         : addTrick,
+        clearTricks      : clearTricks,
+        setGuessedTricks : setGuessedTricks,
+        getCurrentTricks : getCurrentTricks,
+        getGuessedTricks : getGuessedTricks,
+        addPoints        : addPoints,
+        removePoints     : removePoints,
+        getCards         : getCards
     }
 };

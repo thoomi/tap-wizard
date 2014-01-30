@@ -1,6 +1,8 @@
 <div class="hero-unit">
   <h6>Game ID: {{ gameId }}   |  Players: <strong ng-repeat="player in players">{{ player.playerName }}, </strong></h6>
   <h6>Round: {{ round.current }} / {{ round.max }}</h6>
+  <h6>Last trick winner: {{ trickwinner }}</h6>
+  <h6>Trump card: {{ trumpCard.color }} {{ trumpCard.value }}</h6>
 
   <p>Played cards:</p>
   <ul><li ng-repeat="card in cards">{{ card.color }} {{ card.value }}</li></ul>

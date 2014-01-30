@@ -10,7 +10,7 @@ angular.module('clientApp')
 
       // Test values
       //gameData.playerName = 'Heinz';
-      //gameData.gameId     = 1;
+      gameData.gameId     = 1;
 
 
       // Send the connect to game message

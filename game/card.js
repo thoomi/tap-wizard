@@ -8,7 +8,7 @@ exports.Card = function(color, value) {
     var m_value = value;
 
     return {
-        color : m_color,
-        value : m_value,
+        color          : m_color,
+        value          : m_value
     }
 };
