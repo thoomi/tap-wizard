@@ -4,7 +4,8 @@ angular.module('clientApp')
   .controller('PlayergameCtrl', function ($scope, socket, gameData) {
 
     $scope.cards = [];
-    $scope.notification = "Waiting for the host to start the game!"
+    $scope.currentRound = 0;
+    $scope.notification = "Waiting for the host to start the game!";
 
     socket.on('newHandCard', function(card) {
       $scope.cards.push(card);
@@ -12,6 +13,7 @@ angular.module('clientApp')
 
     socket.on('beginNewGame', function(data) {
       $scope.notification = "Game is running!";
+      $scope.currentRound = data.currentRound;
     });
 
     socket.on('cardNotAllowed', function(card) {
@@ -20,8 +22,6 @@ angular.module('clientApp')
 
 
     $scope.throwCard = function(card) {
-      console.log('Throw: ' + card.color + ' ' + card.value);
-
       // Send card to server
       var data = { gameId : gameData.gameId, card : card };
       socket.emit('playerThrowCard', data);
@@ -34,9 +34,17 @@ angular.module('clientApp')
         }
     }
 
+    $scope.guessNumberOfTricks = function(number) {
+      var data = { gameId : gameData.gameId, guessedTricks : number };
+      socket.emit('playerGuessTricks', data);
+    }
 
     // Remove all socket listeners when the controller is destroyed
     $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
     });
+
+    $scope.range = function(n) {
+        return new Array(n);
+    };
   });

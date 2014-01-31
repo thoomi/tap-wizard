@@ -1,6 +1,14 @@
 <p>{{ notification }}</p>
-<ul>
-  <li ng-repeat="card in cards" style="color: {{ card.color }};">{{ card.color }} {{ card.value }}
-    <button ng-click="throwCard(card)">Throw</button>
-  </li>
-</ul>
+<div class="pull-left">
+  <ul>
+    <li ng-repeat="card in cards" style="color: {{ card.color }};">{{ card.color }} {{ card.value }}
+      <button ng-click="throwCard(card)">Throw</button>
+    </li>
+  </ul>
+</div>
+<div class="pull-right">
+  <h5>Guess your number of tricks</h5>
+  <button ng-click="guessNumberOfTricks(0)">0</button>
+  <button ng-repeat="i in range(currentRound)" ng-click="guessNumberOfTricks($index + 1)">{{ $index + 1 }}</button>
+</div>
+

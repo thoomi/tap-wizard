@@ -18,10 +18,12 @@ exports.initGameServer = function(sio, socket) {
     // Host Events
     socket.on('hostCreateNewGame', hostCreateNewGame);
     socket.on('hostPrepareGame', hostPrepareGame);
+    socket.on('hostStartRound', hostStartRound);
 
     // Player Events
     socket.on('playerJoinGame', playerJoinGame);
     socket.on('playerThrowCard', playerThrowCard);
+    socket.on('playerGuessTricks', playerGuessTricks);
     socket.on('disconnect', playerDisconnect);
 }
 
@@ -63,10 +65,15 @@ function hostCreateNewGame() {
 function hostPrepareGame(gameId) {
     var gameTable = gameTables[gameId];
 
-    var data = { maxRounds : gameTable.getNumberOfRounds() };
+    var data = { maxRounds : gameTable.getNumberOfRounds(), currentRound : gameTable.currentRound };
 
     io.sockets.in(gameId).emit('beginNewGame', data);
 
+    //gameTable.dealCards();
+}
+
+function hostStartRound(gameId) {
+    var gameTable = gameTables[gameId];
     gameTable.dealCards();
 }
 
@@ -102,7 +109,9 @@ function playerJoinGame(data) {
         playerSocket.gameId = data.gameId;
 
         // Add the socket Id to the data object
-        data.mySocketId = playerSocket.id;
+        data.socketId = playerSocket.id;
+        data.points   = 0;
+        data.guessedTricks = 0;
 
         // Emit an event notifying the host that a player has joined the game
         gameTable.hostSocket.emit('playerJoinedGame', data);
@@ -134,6 +143,17 @@ function playerThrowCard(data) {
     }
 }
 
+
+function playerGuessTricks(data) {
+    // A reference to the player's Socket.IO socket object
+    var playerSocket = this;
+
+    var gameTable = gameTables[data.gameId];
+
+    if (gameTable != undefined) {
+        gameTable.playerGuessedTricks(data.guessedTricks, playerSocket.id);
+    }
+}
 
 /**
 * A player or the host disconnected

@@ -1,9 +1,31 @@
-<div class="hero-unit">
+<div class="hero-unit pull-left">
   <h6>Game ID: {{ gameId }}   |  Players: <strong ng-repeat="player in players">{{ player.playerName }}, </strong></h6>
   <h6>Round: {{ round.current }} / {{ round.max }}</h6>
   <h6>Last trick winner: {{ trickwinner }}</h6>
   <h6>Trump card: {{ trumpCard.color }} {{ trumpCard.value }}</h6>
 
+  <button ng-click="dealCards()">Deal</button>
+
   <p>Played cards:</p>
   <ul><li ng-repeat="card in cards">{{ card.color }} {{ card.value }}</li></ul>
+</div>
+<div class="hero-unit pull-right">
+  <h5>Guessed Tricks:</h5>
+  <table class="table table-bordered">
+    <tr>
+      <td ng-repeat="player in players">{{ player.playerName }}</td>
+    </tr>
+    <tr>
+      <td ng-repeat="player in players">{{ player.guessedTricks }}</td>
+    </tr>
+  </table>
+  <h5>Points:</h5>
+  <table class="table table-bordered">
+    <tr>
+      <td ng-repeat="player in players">{{ player.playerName }}</td>
+    </tr>
+    <tr>
+      <td ng-repeat="player in players">{{ player.points }}</td>
+    </tr>
+  </table>
 </div>

@@ -76,6 +76,13 @@ exports.GameTable = function(gameId, hostSocket) {
         return m_maxRounds;
     }
 
+    function playerGuessedTricks(number, socketId) {
+        var player = findPlayerBySocketId(socketId);
+        player.setGuessedTricks(number);
+        var data = { socketId : socketId, guessedTricks : number };
+        m_hostSocket.emit('playerGuessedTricks', data);
+    }
+
     function isCardAllowed(card, socketId) {
         // Check if card is wizard or fool
         if (card.color == 'wizard' || card.color == 'fool' ) {
@@ -96,7 +103,7 @@ exports.GameTable = function(gameId, hostSocket) {
 
                     // Check if player has a matching color
                     for (var indexOfPlayerCards = 0; indexOfPlayerCards < playerCards.length; indexOfPlayerCards++) {
-                        if (playerCards[indexOfPlayerCards].color == m_cardsOnTable[indexOfCard].color) {
+                        if (playerCards[indexOfPlayerCards].color == searchedColor) {
                             return false;
                         }
                     }
@@ -115,6 +122,9 @@ exports.GameTable = function(gameId, hostSocket) {
         m_cardsOnTable.push(card);
         m_hostSocket.emit('playerHasThrownCard', card);
 
+        // Remove card from player
+        findPlayerBySocketId(socketId).removeCard(card);
+
         // Check if all cards for this round are played
         if (m_cardsOnTable.length === m_numberOfPlayers) {
             calculateTrickWinner();
@@ -122,7 +132,19 @@ exports.GameTable = function(gameId, hostSocket) {
 
             // Check if the round is over
             if (m_playedTricks === m_currentRound) {
-                // TODO: Calculate points and start next round
+                // TODO: Calculate points
+                var points = {};
+
+                m_currentRound++;
+
+                // Check if game is over
+                if (m_currentRound === m_maxRounds) {
+                    // TODO: game is over logic
+                }
+                else {
+                    m_hostSocket.emit('roundIsOver', points);
+                    m_playedTricks = 0;
+                }
             }
         }
     }
@@ -139,6 +161,7 @@ exports.GameTable = function(gameId, hostSocket) {
     }
 
     function calculateTrickWinner() {
+        // TODO: Implement logic with trump card
         var foolCount  = 0;
         var comparableCards = [];
         var winnerCard = null;
@@ -191,6 +214,7 @@ exports.GameTable = function(gameId, hostSocket) {
         getNumberOfRounds : getNumberOfRounds,
         dealCards         : dealCards,
         playCard          : playCard,
-        isCardAllowed     : isCardAllowed
+        isCardAllowed     : isCardAllowed,
+        playerGuessedTricks : playerGuessedTricks
     }
 };
