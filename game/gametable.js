@@ -115,7 +115,7 @@ exports.GameTable = function(gameId, hostSocket) {
     }
 
     function playCard(card, socketId) {
-        // Add player to card
+        // Add players socket id to card
         card.playerSocketId = socketId;
 
         // Add card to table and notify host
@@ -133,7 +133,7 @@ exports.GameTable = function(gameId, hostSocket) {
             // Check if the round is over
             if (m_playedTricks === m_currentRound) {
                 // TODO: Calculate points
-                var points = {};
+                var points = calculateScores();
 
                 m_currentRound++;
 
@@ -148,6 +148,39 @@ exports.GameTable = function(gameId, hostSocket) {
             }
         }
     }
+
+    function calculateScores() {
+        var points = {};
+
+        // Calculate the points for the current round
+        for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
+            var numberOfGuessedTricks = m_players[indexOfPlayer].getGuessedTricks();
+            var numberOfCurrentTricks = m_players[indexOfPlayer].getCurrentTricks();
+            var difference = Math.abs(numberOfGuessedTricks - numberOfCurrentTricks);
+            var pointsForPlayer = 0;
+
+            if (difference != 0) {
+                // Player is wrong
+                pointsForPlayer = -10 * difference;
+                m_players[indexOfPlayer].removePoints(pointsForPlayer);
+            }
+            else {
+                // Player is right
+                pointsForPlayer = 20 + 10 * numberOfCurrentTricks;
+                m_players[indexOfPlayer].addPoints(pointsForPlayer);
+            }
+
+            // Save the points into the object by players socketId
+            var socketId = m_players[indexOfPlayer].socket.id;
+            points[socketId] = pointsForPlayer;
+
+            // Reset players tricks
+            m_players[indexOfPlayer].clearTricks();
+        }
+
+        return points;
+    }
+
     function setTrickWinner(socketId) {
         // Get player
         var winner = findPlayerBySocketId(socketId);
@@ -204,13 +237,17 @@ exports.GameTable = function(gameId, hostSocket) {
         setTrickWinner(winnerCard.playerSocketId);
     }
 
+    function getCurrentRound() {
+        console.log('Round: ' + m_currentRound);
+        return m_currentRound;
+    }
 
     return {
         gameId            : m_gameId,
         hostSocket        : m_hostSocket,
         addPlayer         : addPlayer,
         removePlayer      : removePlayer,
-        currentRound      : m_currentRound,
+        getCurrentRound   : getCurrentRound,
         getNumberOfRounds : getNumberOfRounds,
         dealCards         : dealCards,
         playCard          : playCard,

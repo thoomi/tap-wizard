@@ -65,16 +65,19 @@ function hostCreateNewGame() {
 function hostPrepareGame(gameId) {
     var gameTable = gameTables[gameId];
 
-    var data = { maxRounds : gameTable.getNumberOfRounds(), currentRound : gameTable.currentRound };
-
-    io.sockets.in(gameId).emit('beginNewGame', data);
-
-    //gameTable.dealCards();
+    if (gameTable != undefined) {
+        var data = { maxRounds : gameTable.getNumberOfRounds(), currentRound : gameTable.getCurrentRound() };
+        io.sockets.in(gameId).emit('beginNewGame', data);
+    }
 }
 
 function hostStartRound(gameId) {
     var gameTable = gameTables[gameId];
-    gameTable.dealCards();
+
+    if (gameTable != undefined) {
+        io.sockets.in(gameId).emit('startNewRound', gameTable.getCurrentRound() );
+        gameTable.dealCards();
+    }
 }
 
 

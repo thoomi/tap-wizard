@@ -11,6 +11,7 @@
     "angular-sanitize": "~1.0.7",
     "socket.io-client": "~0.9.16",
     "bootstrap": "~3.0.1",
+    "angular-hammer": "monospaced/angular-hammer#~1.0.3",
     "hammerjs": "~1.0.6"
   },
   "devDependencies": {

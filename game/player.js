@@ -26,10 +26,10 @@ exports.Player = function(socket, gameId, name) {
     }
 
     function addPoints(points) {
-        m_score += parseInt(points);
+        m_score += Math.abs(parseInt(points));
     }
     function removePoints(points) {
-        m_score -= parseInt(points);
+        m_score -= Math.abs(parseInt(points));
     }
 
     function setGuessedTricks(guessedNumber) {

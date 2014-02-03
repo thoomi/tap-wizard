@@ -9,13 +9,14 @@ angular.module('clientApp')
     $scope.trickwinner  = '';
     $scope.trumpCard    = {};
 
+    $scope.isStartRoundDisabled = false;
+
     socket.on('playerHasThrownCard', function(card) {
       $scope.cards.push(card);
     });
 
     socket.on('newTrumpCard', function(card) {
       $scope.trumpCard = card;
-      console.log(card);
     });
 
     socket.on('playerGuessedTricks', function(data) {
@@ -27,13 +28,21 @@ angular.module('clientApp')
       $scope.cards = [];
     });
 
-    socket.on('roundIsOver', function(data) {
+    socket.on('roundIsOver', function(points) {
       $scope.round.current++;
       $scope.trickwinner = '';
       $scope.trumpCard = {};
+
+      for (var indexOfPlayer = 0; indexOfPlayer < $scope.players.length; indexOfPlayer++) {
+        var socketId = $scope.players[indexOfPlayer].socketId
+        $scope.players[indexOfPlayer].points += points[socketId];
+      }
+
+      $scope.isStartRoundDisabled = false;
     });
 
-    $scope.dealCards = function() {
+    $scope.startRound = function() {
+      $scope.isStartRoundDisabled = true;
       socket.emit('hostStartRound', hostGameData.gameId);
     };
 

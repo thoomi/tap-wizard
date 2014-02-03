@@ -4,8 +4,33 @@ angular.module('clientApp')
   .controller('PlayergameCtrl', function ($scope, socket, gameData) {
 
     $scope.cards = [];
+    // Default values
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+    $scope.cards.push({ color: 'green', value: 9 });
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+    $scope.cards.push({ color: 'green', value: 9 });
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+    $scope.cards.push({ color: 'green', value: 9 });
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+    $scope.cards.push({ color: 'green', value: 9 });
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+    $scope.cards.push({ color: 'green', value: 9 });
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+    $scope.cards.push({ color: 'green', value: 9 });
+    $scope.cards.push({ color: 'red', value: 12 });
+    $scope.cards.push({ color: 'blue', value: 1 });
+
+
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
+
+    $scope.isGuessTricksDisabled = true;
 
     socket.on('newHandCard', function(card) {
       $scope.cards.push(card);
@@ -13,11 +38,15 @@ angular.module('clientApp')
 
     socket.on('beginNewGame', function(data) {
       $scope.notification = "Game is running!";
-      $scope.currentRound = data.currentRound;
     });
 
     socket.on('cardNotAllowed', function(card) {
       $scope.cards.push(card);
+    });
+
+    socket.on('startNewRound', function(round) {
+      $scope.currentRound = round;
+      $scope.isGuessTricksDisabled = false;
     });
 
 
@@ -37,6 +66,7 @@ angular.module('clientApp')
     $scope.guessNumberOfTricks = function(number) {
       var data = { gameId : gameData.gameId, guessedTricks : number };
       socket.emit('playerGuessTricks', data);
+      $scope.isGuessTricksDisabled = true;
     }
 
     // Remove all socket listeners when the controller is destroyed

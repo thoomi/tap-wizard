@@ -4,7 +4,7 @@
   <h6>Last trick winner: {{ trickwinner }}</h6>
   <h6>Trump card: {{ trumpCard.color }} {{ trumpCard.value }}</h6>
 
-  <button ng-click="dealCards()">Deal</button>
+  <button ng-click="startRound()" ng-disabled="isStartRoundDisabled" ng-model="isStartRoundDisabled">Start Round</button>
 
   <p>Played cards:</p>
   <ul><li ng-repeat="card in cards">{{ card.color }} {{ card.value }}</li></ul>
