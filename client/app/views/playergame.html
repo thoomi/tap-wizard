@@ -1,14 +1,17 @@
-<p>{{ notification }}</p>
-<div class="pull-left">
+<div class="card-panel">
   <ul class="playing-card-stack">
-    <li ng-repeat="card in cards" style="color: {{ card.color }};">
+    <li ng-repeat="card in cards" style="color: {{ card.color }};" ng-click="throwCard(card)">
       <tb-playing-card info="card"></tb-playing-card>
     </li>
   </ul>
 </div>
-<div class="pull-right">
-  <h5>Guess your number of tricks</h5>
-  <button ng-click="guessNumberOfTricks(0)" ng-disabled="isGuessTricksDisabled" ng-model="isGuessTricksDisabled">0</button>
-  <button ng-repeat="i in range(currentRound)" ng-click="guessNumberOfTricks($index + 1)" ng-disabled="isGuessTricksDisabled" ng-model="isGuessTricksDisabled">{{ $index + 1 }}</button>
+
+<!--<div class="notification-panel"><p class="notification">{{ notification }}</p></div>-->
+<div class="notification-panel"></div>
+
+<div class="guess-panel">
+  <div class="button-wrapper">
+    <button ng-repeat="i in range(21)" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index" ng-model="isGuessTricksDisabled">{{ $index }}</button>
+  </div>
 </div>
 

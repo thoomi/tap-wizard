@@ -1,7 +1,18 @@
+/* apply a natural box layout model to all elements */
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+ }
+
+
 body {
     background: #fafafa;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #333;
+}
+.content-wrapper {
+  height: 100%;
+  width: 100%;
+  position: absolute;
 }
 
 .hero-unit {
@@ -25,25 +36,130 @@ body {
   font-size: 12px;
 }
 
+.notification-panel {
+  width: 100%;
+  background-color: #00B233;
+  height: 10%;
+  margin: 0;
+  display: table;
+}
+
+.notification-panel .notification {
+  display: table-cell;
+  vertical-align:middle;
+  text-align: center;
+}
+
+.card-panel {
+  width: 100%;
+  padding: 0 18px;
+  background-color: #84B287;
+  height: 60%;
+  position: relative;
+}
+
+.card-panel:before {
+  left: 0;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right:12px solid #B20044;
+  margin-top: -12px;
+}
+
+.card-panel:after {
+  right: 0;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  position: absolute;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 12px solid #B20044;
+  margin-top: -12px;
+}
+
+.guess-panel {
+  width: 100%;
+  height: 30%;
+}
+
+.guess-panel .headline {
+  margin: 0;
+}
+
+.guess-panel button {
+  width: 9%;
+  height: 50%;
+  border: 1px solid #fff;
+  background-color: #aaa;
+}
+
+.guess-panel button:disabled {
+  background-color: #eee;
+  color: #ccc;
+  cursor: default;
+}
+
+.guess-panel button:disabled {
+  background-color: #eee;
+  color: #ccc;
+}
+
+.guess-panel .button-wrapper {
+  height: 100%;
+}
+
+.guess-panel button:first-of-type {
+  height: 100%;
+  float: left;
+  width: 10%;
+}
+
+.guess-zero-panel {
+  width: 10%;
+}
+
 .playing-card-stack {
   margin: 0;
   list-style: none;
-  max-width: 500px;
   overflow-x: scroll;
   white-space: nowrap;
+  height: 100%;
+  border-left: 3px solid #bbb;
+  border-right: 3px solid #bbb;
+  border-radius: 10px;
 }
 .playing-card-stack li {
   display: inline-block;
-}
-
-.playing-card {
+  margin: 5px 3px 3px 0;
   background-color: #ddd;
   border: 1px solid #000;
-  margin: 5px;
-  width: 60px;
-  height: 100px;
+  width: 70px;
+  height: 90%;
+  border-radius: 10px;
   position: relative;
 }
+
+.playing-card-stack li:last-child {
+  margin-right: 0;
+}
+
+.playing-card-figure {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
 .middle {
   position: absolute;
   top: 40%;

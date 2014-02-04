@@ -4,29 +4,6 @@ angular.module('clientApp')
   .controller('PlayergameCtrl', function ($scope, socket, gameData) {
 
     $scope.cards = [];
-    // Default values
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-    $scope.cards.push({ color: 'green', value: 9 });
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-    $scope.cards.push({ color: 'green', value: 9 });
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-    $scope.cards.push({ color: 'green', value: 9 });
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-    $scope.cards.push({ color: 'green', value: 9 });
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-    $scope.cards.push({ color: 'green', value: 9 });
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-    $scope.cards.push({ color: 'green', value: 9 });
-    $scope.cards.push({ color: 'red', value: 12 });
-    $scope.cards.push({ color: 'blue', value: 1 });
-
-
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
 
