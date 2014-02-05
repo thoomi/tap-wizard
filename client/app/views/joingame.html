@@ -1,5 +1,9 @@
-<div class="hero-unit">
-  <input type="text" ng-model="gameId" placeholder="Enter game id here">
-  <input type="text" ng-model="playerName" placeholder="Enter your name here">
-  <a class="btn btn-primary btn-block btn-large" ng-click="connectToGame()">{{ joinGameText | uppercase }}</a>
+<div class="full-width full-height playergame table">
+  <div class="joingame table-cell center">
+      <div class="input-group">
+        <div class="input-control"><input type="text" ng-model="gameId" placeholder="Game ID"></div>
+        <div class="input-control"><input type="text" ng-model="playerName" placeholder="Name"></div>
+      </div>
+      <a class="btn" ng-click="connectToGame()">{{ joinGameText | uppercase }}</a>
+  </div>
 </div>

@@ -4,7 +4,7 @@ angular.module('clientApp')
   .controller('CreategameCtrl', function ($scope, $location, socket, hostGameData) {
 
     $scope.game = {
-      wait: 'Waiting for players.',
+      wait: 'Waiting for other players to join:',
       play: 'Start',
       players : []
     };
@@ -51,4 +51,8 @@ angular.module('clientApp')
     $scope.$on('$destroy', function (event) {
         socket.removeAllListeners();
     });
+
+    $scope.range = function(n) {
+        return new Array(n);
+    };
   });

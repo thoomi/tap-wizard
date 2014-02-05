@@ -42,8 +42,8 @@ function hostCreateNewGame() {
 
     // Create a unique Socket.IO Room / GameId
     // TODO: Develop a proper way to generate a unique gameId
-    //var newGameId = ( Math.random() * 100 ) | 0;
-    var newGameId = '1';
+    var newGameId = ( Math.random() * 100 ) | 0;
+    //var newGameId = '1';
 
     // Create a new game table
     gameTables[newGameId] = new GameTable(newGameId, hostSocket);

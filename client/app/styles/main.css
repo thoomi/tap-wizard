@@ -1,9 +1,6 @@
-/* apply a natural box layout model to all elements */
-*, *:before, *:after {
-  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
- }
-
-
+/**********************************************************/
+/* Common styles
+/**********************************************************/
 body {
     background: #fafafa;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -15,49 +12,170 @@ body {
   position: absolute;
 }
 
-.hero-unit {
-    margin: 50px auto 0 auto;
-    width: 300px;
-    font-size: 18px;
-    font-weight: 200;
-    line-height: 30px;
-    background-color: #eee;
-    border-radius: 6px;
-    padding: 60px;
+a {
+  text-decoration: none;
 }
 
-.hero-unit h1 {
-    font-size: 60px;
-    line-height: 1;
-    letter-spacing: -1px;
+.bold {
+  font-weight: 700;
 }
 
-.table {
-  font-size: 12px;
-}
-
-.notification-panel {
+.full-width {
   width: 100%;
-  background-color: #00B233;
-  height: 10%;
-  margin: 0;
+}
+.full-height {
+  height: 100%;
+}
+.half-width {
+  width: 50%;
+}
+.half-height {
+  height: 50%;
+}
+.table {
   display: table;
 }
-
-.notification-panel .notification {
+.table-cell {
   display: table-cell;
+}
+.center {
   vertical-align:middle;
   text-align: center;
 }
 
+.btn {
+  border: medium none;
+  cursor: pointer;
+  padding: 25px 60px;
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 700;
+  outline: medium none;
+  position: relative;
+  color: #FFF;
+  border-radius: 0px 0px 5px 5px;
+  font-size: 26px;
+  white-space: nowrap;
+}
+
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.left-padding {
+  padding-left: 20px;
+}
+
+/**********************************************************/
+/* Main screen
+/**********************************************************/
+.hostgame {
+  background-color: #F06060;
+}
+.hostgame .btn {
+  box-shadow: 0px 6px #9A2B2B;
+  background-color: #BA3D3D;
+}
+.hostgame .btn:disabled {
+  box-shadow: 0px 0px #9A2B2B;
+  background-color: #DC5F5F;
+  color: #BF5757;
+}
+.hostgame .btn:disabled:hover {
+  box-shadow: 0px 0px #9A2B2B;
+  top: 0;
+}
+.hostgame .btn:hover {
+  box-shadow: 0 4px #9A2B2B;
+  top: 2px;
+}
+.playergame {
+  background-color: #0E83CD;
+}
+.playergame .btn {
+  box-shadow: 0px 6px #004D9C;
+  background-color: #115EAD;
+}
+.playergame .btn:hover {
+  box-shadow: 0 4px #004D9C;
+  top: 2px;
+}
+
+/**********************************************************/
+/* Create game screen
+/**********************************************************/
+.creategame {
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  background-color: #F06060;
+}
+
+.list-group {
+  list-style: none;
+  text-align: left;
+  padding: 0;
+}
+.list-group-item {
+  background-color: #2ECC71;
+  border: 1px solid #EEE;
+  padding: 5px 0 5px 10px;
+  font-weight: bold;
+  font-size: 14px;
+
+}
+.list-group-item + .list-group-item {
+  border-top: none;
+}
+
+.free-slot {
+  color: #EEE;
+  background-color: #fff;
+}
+
+/**********************************************************/
+/* Join game screen
+/**********************************************************/
+.joingame {
+  padding: 5px;
+}
+.input-control {
+  padding-bottom: 10px;
+}
+.input-control input {
+  border-radius: 5px;
+  text-align: center;
+  width: 100%;
+  max-width: 300px;
+  height: 50px;
+  font-size: 24px;
+}
+.joingame .btn {
+  width: 100%;
+  max-width: 300px;
+}
+
+/**********************************************************/
+/* Player game screen
+/**********************************************************/
+
+/**
+ * Card panel
+ */
 .card-panel {
   width: 100%;
   padding: 0 18px;
-  background-color: #84B287;
+  background-color: #0E83CD;
   height: 60%;
   position: relative;
 }
-
 .card-panel:before {
   left: 0;
   top: 50%;
@@ -69,7 +187,7 @@ body {
   pointer-events: none;
   border-top: 12px solid transparent;
   border-bottom: 12px solid transparent;
-  border-right:12px solid #B20044;
+  border-right:12px solid #004D9C;
   margin-top: -12px;
 }
 
@@ -84,24 +202,42 @@ body {
   height: 0;
   border-top: 12px solid transparent;
   border-bottom: 12px solid transparent;
-  border-left: 12px solid #B20044;
+  border-left: 12px solid #004D9C;
   margin-top: -12px;
 }
 
+/**
+ * Notification panel
+ */
+.notification-panel {
+  width: 100%;
+  background-color: #FCD04B;
+  height: 10%;
+}
+
+/**
+ * Guess tricks panel
+ */
 .guess-panel {
   width: 100%;
   height: 30%;
 }
 
-.guess-panel .headline {
-  margin: 0;
+.guess-panel .button-wrapper {
+  height: 100%;
 }
 
 .guess-panel button {
   width: 9%;
   height: 50%;
   border: 1px solid #fff;
-  background-color: #aaa;
+  background-color: #333940;
+  color: #fff;
+}
+
+.guess-panel button + button {
+  border-left: none;
+  border-bottom: none;
 }
 
 .guess-panel button:disabled {
@@ -115,75 +251,71 @@ body {
   color: #ccc;
 }
 
-.guess-panel .button-wrapper {
-  height: 100%;
-}
-
 .guess-panel button:first-of-type {
   height: 100%;
   float: left;
   width: 10%;
 }
 
-.guess-zero-panel {
-  width: 10%;
-}
+/**
+ * Playing card stack and playing card
+ */
 
 .playing-card-stack {
   margin: 0;
+  padding: 0;
   list-style: none;
   overflow-x: scroll;
   white-space: nowrap;
   height: 100%;
-  border-left: 3px solid #bbb;
-  border-right: 3px solid #bbb;
-  border-radius: 10px;
+  width: 100%;
+  border-left: 3px solid #004D9C;
+  border-right: 3px solid #004D9C;
+  border-radius: 5px;
 }
 .playing-card-stack li {
   display: inline-block;
   margin: 5px 3px 3px 0;
-  background-color: #ddd;
-  border: 1px solid #000;
-  width: 70px;
+  width: 90px;
   height: 90%;
-  border-radius: 10px;
-  position: relative;
 }
 
 .playing-card-stack li:last-child {
   margin-right: 0;
 }
 
-.playing-card-figure {
+.playing-card {
   position: relative;
   height: 100%;
   width: 100%;
+  background-color: #FFFFFF;
+  border: 1px solid #000;
+  border-radius: 8px;
 }
 
-.middle {
+.playing-card .middle {
   position: absolute;
   top: 40%;
 }
-.center {
+.playing-card .center {
   text-align: center;
   width: 100%;
 }
-
-.corner {
+.playing-card .corner {
   position: absolute;
   padding: 4px;
   font-size: 14px;
   line-height: 14px;
 }
-.top {
+.playing-card .top {
   top: 0;
 }
-.bottom {
+.playing-card .bottom {
   bottom: 0;
 }
-.left {
+.playing-card .left {
   left: 0;
 }
-.right {
+.playing-card .right {
   right: 0;
 }

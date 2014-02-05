@@ -6,12 +6,11 @@
   </ul>
 </div>
 
-<!--<div class="notification-panel"><p class="notification">{{ notification }}</p></div>-->
-<div class="notification-panel"></div>
+<div class="notification-panel table"><p class="table-cell center">{{ notification }}</p></div>
 
 <div class="guess-panel">
   <div class="button-wrapper">
-    <button ng-repeat="i in range(21)" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index" ng-model="isGuessTricksDisabled">{{ $index }}</button>
+    <button ng-repeat="i in range(21)" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index || isGuessTricksDisabled" ng-model="isGuessTricksDisabled">{{ $index }}</button>
   </div>
 </div>
 

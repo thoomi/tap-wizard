@@ -7,6 +7,7 @@ angular.module('clientApp')
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
 
+
     $scope.isGuessTricksDisabled = true;
 
     socket.on('newHandCard', function(card) {
