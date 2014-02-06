@@ -1,0 +1,15 @@
+<div class="card-panel">
+  <ul class="playing-card-stack">
+    <li ng-repeat="card in cards" style="color: {{ card.color }}" ng-click="throwCard(card)">
+      <tb-playing-card info="card"></tb-playing-card>
+    </li>
+  </ul>
+</div>
+
+<div class="notification-panel table"><p class="table-cell center">{{ notification }}</p></div>
+
+<div class="guess-panel">
+  <div class="button-wrapper">
+    <button ng-repeat="i in range(21)" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index || isGuessTricksDisabled" ng-model="isGuessTricksDisabled">{{ $index }}</button>
+  </div>
+</div>
