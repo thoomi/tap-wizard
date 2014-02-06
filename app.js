@@ -6,9 +6,13 @@ var app        = express();
 var server     = require('http').createServer(app);
 var io         = require('socket.io').listen(server);
 var gameserver = require('./game/gameserver.js');
+var path = require('path');
 
 
 app.set('port', process.env.PORT || 3000);
+
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res) {
     res.sendfile(__dirname + '/public/index.html');
