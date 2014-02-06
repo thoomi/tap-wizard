@@ -2,7 +2,7 @@
 
 angular.module('clientApp')
  .factory('socket', function ($rootScope) {
-        var socket = io.connect('http://192.168.0.110:3000');
+        var socket = io.connect('http://afternoon-lowlands-7192.herokuapp.com:3000');
         return {
             on: function (eventName, callback) {
                 socket.on(eventName, function () {
