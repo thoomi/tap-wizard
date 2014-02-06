@@ -258,7 +258,7 @@ a {
 }
 
 /**
- * Playing card stack and playing card
+ * Playing card stack
  */
 
 .playing-card-stack {
@@ -272,6 +272,7 @@ a {
   border-left: 3px solid #004D9C;
   border-right: 3px solid #004D9C;
   border-radius: 5px;
+  position: relative;
 }
 .playing-card-stack li {
   display: inline-block;
@@ -284,6 +285,113 @@ a {
   margin-right: 0;
 }
 
+
+/**********************************************************/
+/* Host game screen
+/**********************************************************/
+.info-panel {
+  width: 100%;
+  background-color: #2C3E52;
+  color: #B6BDC5;
+  height: 10%;
+}
+.separator {
+  color: #B6BDC5;
+  padding: 0 10px;
+}
+.highlight {
+  color: #ED4E6E;
+  font-weight: bold;
+  padding-right: 40px;
+}
+
+.play-panel {
+  height: 90%;
+}
+
+.playing-table {
+  width: 65%;
+  background-color: #F06060;
+  position: relative;
+  padding: 10px;
+}
+
+.score-panel {
+  width: 35%;
+  background-color: #226FBE;
+  padding: 10px;
+  font-size: 12px;
+  color: #fff;
+}
+
+.score-table-background {
+  width: 100%;
+}
+.score-table-background thead {
+  font-weight: bold;
+}
+.round {
+  font-weight: bold;
+  border-right: 2px solid #FFFFFF;
+}
+
+.in-use {
+  border-right: 1px solid rgba(150, 150, 150, 0.8);
+  border-bottom: 1px solid rgba(150, 150, 150, 0.8);
+}
+.unused {
+  border-right: 1px solid rgba(150, 150, 150, 0.4);
+  border-bottom: 1px solid rgba(150, 150, 150, 0.4);
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.score-table-background thead .in-use {
+  border-right: 2px solid #FFF;
+  border-bottom: 2px solid #FFF;
+}
+
+.scores {
+  color: #fff;
+}
+
+.guessedNumber {
+  width: 30%;
+  border-right: 1px solid #fff;
+  color: #C7CED6;
+}
+.score {
+  width: 70%;
+  color: #FCD04B;
+}
+
+.score-set {
+  border-right: 2px solid #fff;
+}
+
+.start-btn-wrapper {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  margin-left: -165px;
+}
+
+.trumpcard-container {
+  width: 120px;
+  height: 70px;
+  top: 10px;
+  left: 10px;
+  position: absolute;
+  text-align: left;
+}
+
+.playing-table .playing-card-stack {
+  height: 45%;
+  text-align: left;
+}
+
+/**********************************************************/
+/* Playing card
+/**********************************************************/
 .playing-card {
   position: relative;
   height: 100%;
@@ -292,12 +400,9 @@ a {
   border: 1px solid #000;
   border-radius: 8px;
 }
-
 .playing-card .middle {
   position: absolute;
   top: 40%;
-}
-.playing-card .center {
   text-align: center;
   width: 100%;
 }

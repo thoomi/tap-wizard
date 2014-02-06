@@ -2,7 +2,7 @@
   <div class="joingame table-cell center">
       <div class="input-group">
         <div class="input-control"><input type="text" ng-model="gameId" placeholder="Game ID"></div>
-        <div class="input-control"><input type="text" ng-model="playerName" placeholder="Name"></div>
+        <div class="input-control"><input type="text" ng-model="playerName" placeholder="Name" maxlength="3"></div>
       </div>
       <a class="btn" ng-click="connectToGame()">{{ joinGameText | uppercase }}</a>
   </div>

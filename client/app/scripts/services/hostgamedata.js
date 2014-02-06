@@ -5,7 +5,7 @@ angular.module('clientApp')
     var gameId       = 0;
     var players      = [];
     var currentRound = 1;
-    var maxRounds    = 0;
+    var maxRounds    = 20;
 
     function findPlayerBySocketId(socketId) {
       for (var indexOfPlayer = 0; indexOfPlayer < players.length; indexOfPlayer++) {

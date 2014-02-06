@@ -8,6 +8,11 @@ angular.module('clientApp')
     $scope.round        = { current: hostGameData.currentRound, max: hostGameData.maxRounds };
     $scope.trickwinner  = '';
     $scope.trumpCard    = {};
+    $scope.scores       = [];
+
+    /*$scope.players.push({ playerName: 'Hei' });
+    $scope.players.push({ playerName: 'DaR' });
+    $scope.players.push({ playerName: 'MiB' });*/
 
     $scope.isStartRoundDisabled = false;
 
@@ -20,7 +25,9 @@ angular.module('clientApp')
     });
 
     socket.on('playerGuessedTricks', function(data) {
-      hostGameData.findPlayerBySocketId(data.socketId).guessedTricks = data.guessedTricks;
+      $scope.scores[$scope.round.current][data.socketId] = {};
+      $scope.scores[$scope.round.current][data.socketId].guessedTricks = data.guessedTricks;
+      //hostGameData.findPlayerBySocketId(data.socketId).guessedTricks = data.guessedTricks;
     });
 
     socket.on('playerHasWonTrick', function(name) {
@@ -29,20 +36,26 @@ angular.module('clientApp')
     });
 
     socket.on('roundIsOver', function(points) {
-      $scope.round.current++;
       $scope.trickwinner = '';
       $scope.trumpCard = {};
 
       for (var indexOfPlayer = 0; indexOfPlayer < $scope.players.length; indexOfPlayer++) {
-        var socketId = $scope.players[indexOfPlayer].socketId
-        $scope.players[indexOfPlayer].points += points[socketId];
+        var socketId     = $scope.players[indexOfPlayer].socketId
+        var currentScore = $scope.players[indexOfPlayer].points;
+        var scoreToAdd   = points[socketId];
+
+        $scope.scores[$scope.round.current][socketId].score = currentScore + scoreToAdd;
+        $scope.players[indexOfPlayer].points = currentScore + scoreToAdd;
       }
 
+      $scope.round.current++;
       $scope.isStartRoundDisabled = false;
     });
 
     $scope.startRound = function() {
       $scope.isStartRoundDisabled = true;
+      $scope.scores[$scope.round.current] = {};
+
       socket.emit('hostStartRound', hostGameData.gameId);
     };
 
