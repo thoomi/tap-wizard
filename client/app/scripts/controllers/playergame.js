@@ -7,7 +7,7 @@ angular.module('clientApp')
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
 
-
+    var playedCardThisTrick = false;
     $scope.isGuessTricksDisabled = true;
 
     socket.on('newHandCard', function(card) {
@@ -27,18 +27,29 @@ angular.module('clientApp')
       $scope.isGuessTricksDisabled = false;
     });
 
+    socket.on('playerHasWonTrick', function(winner) {
+      $scope.playedCardThisTrick = false;
+    });
+
 
     $scope.throwCard = function(card) {
-      // Send card to server
-      var data = { gameId : gameData.gameId, card : card };
-      socket.emit('playerThrowCard', data);
+      if (playedCardThisTrick === false && $scope.isGuessTricksDisabled === true) {
+        // Send card to server
+        var data = { gameId : gameData.gameId, card : card };
+        socket.emit('playerThrowCard', data);
 
-      // Remove card from array
-      for (var indexOfCard = 0; indexOfCard < $scope.cards.length; indexOfCard++) {
+        // Remove card from array
+        for (var indexOfCard = 0; indexOfCard < $scope.cards.length; indexOfCard++) {
             if($scope.cards[indexOfCard].color === card.color && $scope.cards[indexOfCard].value === card.value) {
                 $scope.cards.splice(indexOfCard, 1);
             }
         }
+
+        $scope.playedCardThisTrick = true;
+      }
+      else {
+        // TODO: Notify user that he already played a card
+      }
     }
 
     $scope.guessNumberOfTricks = function(number) {

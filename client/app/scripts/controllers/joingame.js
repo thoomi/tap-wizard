@@ -2,9 +2,14 @@
 
 angular.module('clientApp')
   .controller('JoingameCtrl', function ($scope, $location, socket, gameData) {
+
     $scope.joinGameText = 'Join';
+    $scope.isConnectDisabled = false;
 
     $scope.connectToGame = function() {
+      $scope.isConnectDisabled = true;
+      $scope.joinGameText = 'Joining..';
+
       gameData.playerName = $scope.playerName;
       gameData.gameId = $scope.gameId;
 
@@ -24,6 +29,8 @@ angular.module('clientApp')
 
     socket.on('error', function(data) {
       console.log('Error: ' + data);
+      $scope.isConnectDisabled = false;
+      $scope.joinGameText = 'Join';
     });
 
     // Remove all socket listeners when the controller is destroyed

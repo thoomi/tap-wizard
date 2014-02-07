@@ -45,6 +45,12 @@ exports.GameTable = function(gameId, hostSocket) {
         }
     }
 
+    function emitToPlayers(message, data) {
+        for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
+            m_players[indexOfPlayer].socket.emit(message, data);
+        }
+    }
+
 
     function dealCards() {
         var dealedCards = 0;
@@ -144,6 +150,7 @@ exports.GameTable = function(gameId, hostSocket) {
                 else {
                     m_hostSocket.emit('roundIsOver', points);
                     m_playedTricks = 0;
+                    m_trumpColor = '';
                 }
             }
         }
@@ -186,15 +193,15 @@ exports.GameTable = function(gameId, hostSocket) {
         var winner = findPlayerBySocketId(socketId);
         winner.addTrick();
 
-        // Notify host about the winner
+        // Notify host and players about the winner
         m_hostSocket.emit('playerHasWonTrick', winner.name);
+        emitToPlayers('playerHasWonTrick', winner.name);
 
         // Empty array
         m_cardsOnTable = [];
     }
 
     function calculateTrickWinner() {
-        // TODO: Implement logic with trump card
         var foolCount  = 0;
         var comparableCards = [];
         var winnerCard = null;
@@ -223,15 +230,48 @@ exports.GameTable = function(gameId, hostSocket) {
         // Set the winner card
         winnerCard = comparableCards[0];
 
-        for (var i = 1; i < comparableCards.length; i++) {
-            // Check if color is the same
-            if(comparableCards[i].color === winnerCard.color) {
-                // Check if value is higher
-                if(comparableCards[i].value > winnerCard.value) {
-                    winnerCard = comparableCards[i];
+
+        if (m_trumpColor == '' || m_trumpColor == 'wizard' || m_trumpColor == 'fool') {
+            for (var i = 1; i < comparableCards.length; i++) {
+                // Check if color is the same
+                if(comparableCards[i].color === winnerCard.color) {
+                    // Check if value is higher
+                    if(comparableCards[i].value > winnerCard.value) {
+                        winnerCard = comparableCards[i];
+                    }
                 }
             }
         }
+        else {
+            for (var i = 1; i < comparableCards.length; i++) {
+                // Check if color is the same
+                if(comparableCards[i].color === winnerCard.color) {
+                    // Check if value is higher
+                    if(comparableCards[i].value > winnerCard.value) {
+                        winnerCard = comparableCards[i];
+                    }
+                }
+                else {
+                    // Check if card is a trump
+                    if (comparableCards[i].color === m_trumpColor) {
+                        // Check if current winner card is a trump
+                        if (winnerCard.color === m_trumpColor) {
+                            // Both cards are trumps; Compare the values
+                            if (comparableCards[i].value > winnerCard.value) {
+                                winnerCard = comparableCards[i];
+                            }
+                        }
+                        else {
+                            // Card is a trump and current winner card not
+                            winnerCard = comparableCards[i];
+                        }
+                    }
+                }
+
+            }
+        }
+
+
 
         // Set winner
         setTrickWinner(winnerCard.playerSocketId);
