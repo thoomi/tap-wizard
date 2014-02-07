@@ -9,6 +9,8 @@ angular.module('clientApp')
       players : []
     };
 
+    $scope.isStartDisabled = true;
+
     // Setup event listeners
     socket.on('connected', function(data) {
       console.log('Websocket connected');
@@ -22,6 +24,11 @@ angular.module('clientApp')
     socket.on('playerJoinedGame', function(data) {
       $scope.game.players.push(data);
       hostGameData.players.push(data);
+
+      // Enable start button if enough players have joined
+      if ($scope.game.players.length >= 3) {
+        $scope.isStartDisabled = false;
+      }
     });
 
     socket.on('playerLeftGame', function(data) {
@@ -40,6 +47,7 @@ angular.module('clientApp')
 
 
     $scope.prepareGameForPlay = function() {
+      $scope.isStartDisabled = true;
       socket.emit('hostPrepareGame', hostGameData.gameId);
     };
 

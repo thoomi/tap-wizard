@@ -1,6 +1,6 @@
 <div class="card-panel">
   <ul class="playing-card-stack">
-    <li ng-repeat="card in cards" style="color: {{ card.color }};" ng-click="throwCard(card)">
+    <li ng-repeat="card in cards" ng-click="throwCard(card)">
       <tb-playing-card info="card"></tb-playing-card>
     </li>
   </ul>

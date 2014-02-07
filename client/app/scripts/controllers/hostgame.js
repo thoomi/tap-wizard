@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clientApp')
-  .controller('HostgameCtrl', function ($scope, socket, hostGameData) {
+  .controller('HostgameCtrl', function ($scope, socket, hostGameData, $timeout) {
     $scope.gameId       = hostGameData.gameId;
     $scope.players      = hostGameData.players;
     $scope.cards        = [];
@@ -10,9 +10,6 @@ angular.module('clientApp')
     $scope.trumpCard    = {};
     $scope.scores       = [];
 
-    /*$scope.players.push({ playerName: 'Hei' });
-    $scope.players.push({ playerName: 'DaR' });
-    $scope.players.push({ playerName: 'MiB' });*/
 
     $scope.isStartRoundDisabled = false;
 
@@ -32,11 +29,13 @@ angular.module('clientApp')
 
     socket.on('playerHasWonTrick', function(name) {
       $scope.trickwinner = name;
-      $scope.cards = [];
+      $timeout(function() {
+        $scope.cards = [];
+        console.log('executed');
+      },8000);
     });
 
     socket.on('roundIsOver', function(points) {
-      $scope.trickwinner = '';
       $scope.trumpCard = {};
 
       for (var indexOfPlayer = 0; indexOfPlayer < $scope.players.length; indexOfPlayer++) {
@@ -55,6 +54,7 @@ angular.module('clientApp')
     $scope.startRound = function() {
       $scope.isStartRoundDisabled = true;
       $scope.scores[$scope.round.current] = {};
+      $scope.trickwinner = '';
 
       socket.emit('hostStartRound', hostGameData.gameId);
     };

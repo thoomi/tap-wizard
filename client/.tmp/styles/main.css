@@ -122,6 +122,17 @@ a {
   background-color: #115EAD;
 }
 
+.playergame .btn:disabled {
+  box-shadow: 0px 0px #9A2B2B;
+  background-color: #226FBE;
+  color: #115EAD;
+}
+
+.playergame .btn:disabled:hover {
+  box-shadow: 0px 0px #9A2B2B;
+  top: 0;
+}
+
 .playergame .btn:hover {
   box-shadow: 0 4px #004D9C;
   top: 2px;
@@ -169,6 +180,7 @@ a {
 
 .joingame {
   padding: 5px;
+  position: relative;
 }
 
 .input-control {
@@ -310,12 +322,17 @@ a {
 .playing-card-stack li {
   display: inline-block;
   margin: 5px 3px 3px 0;
-  width: 90px;
+  width: 80px;
   height: 90%;
+  margin-left: -35px;
 }
 
 .playing-card-stack li:last-child {
   margin-right: 0;
+}
+
+.playing-card-stack li:first-child {
+  margin-left: 0;
 }
 
 /**********************************************************/
@@ -419,7 +436,8 @@ a {
   width: 120px;
   height: 70px;
   top: 10px;
-  left: 10px;
+  left: 50%;
+  margin-left: -60px;
   position: absolute;
   text-align: left;
 }
@@ -427,6 +445,10 @@ a {
 .playing-table .playing-card-stack {
   height: 45%;
   text-align: left;
+}
+
+.playing-table .playing-card-stack li {
+  margin-left: 0;
 }
 
 /**********************************************************/
@@ -438,23 +460,19 @@ a {
   position: relative;
   height: 100%;
   width: 100%;
-  background-color: #FFFFFF;
+  background-color: #555;
+  color: #FFF;
   border: 1px solid #000;
   border-radius: 8px;
-}
-
-.playing-card .middle {
-  position: absolute;
-  top: 40%;
-  text-align: center;
-  width: 100%;
+  cursor: pointer;
 }
 
 .playing-card .corner {
   position: absolute;
-  padding: 4px;
-  font-size: 14px;
+  padding: 8px;
+  font-size: 22px;
   line-height: 14px;
+  font-weight: bold;
 }
 
 .playing-card .top {
@@ -471,4 +489,210 @@ a {
 
 .playing-card .right {
   right: 0;
+}
+
+/**********************************************************/
+
+/* Windows 8 loader
+/**********************************************************/
+
+.windows8 {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  top: 50%;
+  margin-top: -16px;
+  right: 0;
+  margin-right: 35px;
+}
+
+.windows8 .wBall {
+  position: absolute;
+  width: 31px;
+  height: 31px;
+  opacity: 0;
+  -webkit-transform: rotate(225deg);
+  -webkit-animation: orbit 7.15s infinite;
+  -ms-transform: rotate(225deg);
+  transform: rotate(225deg);
+  animation: orbit 7.15s infinite;
+}
+
+.windows8 .wBall .wInnerBall {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #FFFFFF;
+  left: 0px;
+  top: 0px;
+  border-radius: 11px;
+}
+
+.windows8 #wBall_1 {
+  -webkit-animation-delay: 1.56s;
+  animation-delay: 1.56s;
+}
+
+.windows8 #wBall_2 {
+  -webkit-animation-delay: 0.31s;
+  animation-delay: 0.31s;
+}
+
+.windows8 #wBall_3 {
+  -webkit-animation-delay: 0.62s;
+  animation-delay: 0.62s;
+}
+
+.windows8 #wBall_4 {
+  -webkit-animation-delay: 0.94s;
+  animation-delay: 0.94s;
+}
+
+.windows8 #wBall_5 {
+  -webkit-animation-delay: 1.25s;
+  animation-delay: 1.25s;
+}
+
+@-webkit-keyframes orbit {
+  0% {
+    opacity: 1;
+    z-index: 99;
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+
+  7% {
+    opacity: 1;
+    -webkit-transform: rotate(300deg);
+    transform: rotate(300deg);
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    origin: 0%;
+  }
+
+  30% {
+    opacity: 1;
+    -webkit-transform: rotate(410deg);
+    transform: rotate(410deg);
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    origin: 7%;
+  }
+
+  39% {
+    opacity: 1;
+    -webkit-transform: rotate(645deg);
+    transform: rotate(645deg);
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    origin: 30%;
+  }
+
+  70% {
+    opacity: 1;
+    -webkit-transform: rotate(770deg);
+    transform: rotate(770deg);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    origin: 39%;
+  }
+
+  75% {
+    opacity: 1;
+    -webkit-transform: rotate(900deg);
+    transform: rotate(900deg);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    origin: 70%;
+  }
+
+  76% {
+    opacity: 0;
+    -webkit-transform: rotate(900deg);
+    transform: rotate(900deg);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: rotate(900deg);
+    transform: rotate(900deg);
+  }
+}
+
+@keyframes orbit {
+  0% {
+    opacity: 1;
+    z-index: 99;
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+
+  7% {
+    opacity: 1;
+    -webkit-transform: rotate(300deg);
+    -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    origin: 0%;
+  }
+
+  30% {
+    opacity: 1;
+    -webkit-transform: rotate(410deg);
+    -ms-transform: rotate(410deg);
+    transform: rotate(410deg);
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+    origin: 7%;
+  }
+
+  39% {
+    opacity: 1;
+    -webkit-transform: rotate(645deg);
+    -ms-transform: rotate(645deg);
+    transform: rotate(645deg);
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    origin: 30%;
+  }
+
+  70% {
+    opacity: 1;
+    -webkit-transform: rotate(770deg);
+    -ms-transform: rotate(770deg);
+    transform: rotate(770deg);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    origin: 39%;
+  }
+
+  75% {
+    opacity: 1;
+    -webkit-transform: rotate(900deg);
+    -ms-transform: rotate(900deg);
+    transform: rotate(900deg);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    origin: 70%;
+  }
+
+  76% {
+    opacity: 0;
+    -webkit-transform: rotate(900deg);
+    -ms-transform: rotate(900deg);
+    transform: rotate(900deg);
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: rotate(900deg);
+    -ms-transform: rotate(900deg);
+    transform: rotate(900deg);
+  }
 }

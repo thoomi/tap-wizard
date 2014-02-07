@@ -61,15 +61,15 @@ exports.Deck = function() {
         Card('green', 12),
         Card('green', 13),
 
-        Card('wizard', 99),
-        Card('wizard', 99),
-        Card('wizard', 99),
-        Card('wizard', 99),
+        Card('wizard', 'W'),
+        Card('wizard', 'W'),
+        Card('wizard', 'W'),
+        Card('wizard', 'W'),
 
-        Card('fool', 0),
-        Card('fool', 0),
-        Card('fool', 0),
-        Card('fool', 0)
+        Card('fool', 'N'),
+        Card('fool', 'N'),
+        Card('fool', 'N'),
+        Card('fool', 'N')
     ];
 
     function shuffle() {
