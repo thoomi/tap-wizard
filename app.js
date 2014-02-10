@@ -14,9 +14,6 @@ app.set('port', process.env.PORT || 3000);
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-/*app.get('/', function(req, res) {
-    res.sendfile(__dirname + '/public/index.html');
-});*/
 
 app.get('/', function(req, res) {
     fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
@@ -29,7 +26,7 @@ server.listen(app.get('port'), function(){
 });
 
 
-// Listen for Socket.IO Connections. Once connected, start the game logic.
+// Listen for Socket.IO Connections. Once connected, listen to messages.
 io.sockets.on('connection', function (socket) {
-    gameserver.initGameServer(io, socket);
+    gameserver.initializeListeners(io, socket);
 });

@@ -10,7 +10,7 @@ var gameTables  = {};
 * @param sio The Socket.IO library
 * @param socket The socket object for the connected client.
 */
-exports.initGameServer = function(sio, socket) {
+exports.initializeListeners = function(sio, socket) {
     io = sio;
 
     socket.emit('connected', { message: "You are connected!" });

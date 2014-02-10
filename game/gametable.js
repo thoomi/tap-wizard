@@ -7,6 +7,7 @@ exports.GameTable = function(gameId, hostSocket) {
     if (typeof(gameId) === 'undefined') { throw "Parameter gameId is not defined!"; }
 
     var m_gameId          = gameId;
+    var m_gameState       = 'waiting';
     var m_deck            = new Deck();
     var m_cardsOnTable    = [];
     var m_hostSocket      = hostSocket;
