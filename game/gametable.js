@@ -1,36 +1,37 @@
 var Player = require('./player.js').Player;
 var Deck   = require('./deck.js').Deck;
 
-exports.GameTable = function(gameId, hostSocket) {
+exports.GameTable = function(gameId, host) {
     'use strict';
 
-    if (typeof(gameId) === 'undefined') { throw "Parameter gameId is not defined!"; }
+    var m_gameId            = gameId;
+    var m_gameState         = 'waiting';
+    var m_deck              = new Deck();
+    var m_cardsOnTable      = [];
+    var m_host              = host;
+    var m_players           = [];
+    var m_numberOfPlayers   = 0;
+    var m_maxRounds         = 0;
+    var m_currentRound      = 1;
+    var m_playedTricks      = 0;
+    var m_trumpColor        = '';
+    var m_firstPlayedCard   = null;
+    var m_firstPlayedColor  = '';
+    var m_indexOfDealer     = 0;
+    var m_lastTrickWinner   = null;
 
-    var m_gameId          = gameId;
-    var m_gameState       = 'waiting';
-    var m_deck            = new Deck();
-    var m_cardsOnTable    = [];
-    var m_hostSocket      = hostSocket;
-    var m_players         = [];
-    var m_numberOfPlayers = 0;
-    var m_maxRounds       = 0;
-    var m_currentRound    = 1;
-    var m_playedTricks    = 0;
-    var m_trumpColor      = '';
 
-
-    function addPlayer(socket, name) {
-        // Create a new player
-        var player = new Player(socket, this, name);
+    function addPlayer(player) {
         // Save the player
         m_players.push(player);
 
+        // Count players
         m_numberOfPlayers++;
     }
-    function removePlayer(socket) {
+    function removePlayer(sessionId) {
 
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            if(m_players[indexOfPlayer].socket.id === socket.id) {
+            if(m_players[indexOfPlayer].getId() === sessionId) {
                 m_players.splice(indexOfPlayer, 1);
             }
         }
@@ -38,42 +39,52 @@ exports.GameTable = function(gameId, hostSocket) {
         m_numberOfPlayers--;
     }
 
-    function findPlayerBySocketId(socketId) {
+    function findPlayerById(id) {
+        return m_players[getPlayersIndex(id)];
+    }
+    function getPlayersIndex(id) {
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            if(m_players[indexOfPlayer].socket.id === socketId) {
-                return m_players[indexOfPlayer];
+            if(m_players[indexOfPlayer].getId() === id) {
+                return indexOfPlayer;
             }
         }
+        return 0;
     }
 
     function emitToPlayers(message, data) {
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            m_players[indexOfPlayer].socket.emit(message, data);
+            m_players[indexOfPlayer].emit(message, data);
         }
     }
 
 
     function dealCards() {
-        var dealedCards = 0;
+        var numberOfdealedCards = 0;
         // Shuffle card deck
         m_deck.shuffle();
 
         for (var indexOfTurn = 0; indexOfTurn < m_currentRound; indexOfTurn++) {
             for (var indexOfPlayer = 0; indexOfPlayer < m_numberOfPlayers; indexOfPlayer++) {
                 m_players[indexOfPlayer].addCard(m_deck.cards[indexOfTurn * m_numberOfPlayers + indexOfPlayer]);
-                // Also update the players browser
-                m_players[indexOfPlayer].socket.emit('newHandCard', m_deck.cards[indexOfTurn * m_numberOfPlayers + indexOfPlayer]);
-                // Count dealedCards
-                dealedCards++;
+                m_players[indexOfPlayer].emit('newHandCard', m_deck.cards[indexOfTurn * m_numberOfPlayers + indexOfPlayer]);
+                // Count dealed cards
+                numberOfdealedCards++;
             }
         }
 
         // Choose trump card
-        var trumpCard = m_deck.cards[dealedCards];
+        var trumpCard = m_deck.cards[numberOfdealedCards];
         if (trumpCard != undefined) {
             m_trumpColor = trumpCard.color;
-            m_hostSocket.emit('newTrumpCard', trumpCard);
+            m_host.emit('newTrumpCard', trumpCard);
         }
+    }
+
+    function getIndexOfDealersNeighbor() {
+        if ((m_indexOfDealer + 1) === m_numberOfPlayers) {
+            return 0;
+        }
+        return m_indexOfDealer + 1;
     }
 
     function getNumberOfRounds() {
@@ -83,54 +94,83 @@ exports.GameTable = function(gameId, hostSocket) {
         return m_maxRounds;
     }
 
-    function playerGuessedTricks(number, socketId) {
-        var player = findPlayerBySocketId(socketId);
-        player.setGuessedTricks(number);
-        var data = { socketId : socketId, guessedTricks : number };
-        m_hostSocket.emit('playerGuessedTricks', data);
+    function playerGuessedTricks(number, playerId) {
+        var player = findPlayerById(playerId);
+        player.setGuessedTricks(m_currentRound, number);
+
+        var data = { playerId : playerId, guessedTricks : number, round: m_currentRound };
+        m_host.emit('playerGuessedTricks', data);
     }
 
-    function isCardAllowed(card, socketId) {
-        // Check if card is wizard or fool
-        if (card.color == 'wizard' || card.color == 'fool' ) {
-            return true;
+    function setFirstPlayedColor(color) {
+        if(color !== 'wizard' && color !== 'fool') {
+            m_firstPlayedColor = color;
+        }
+    }
+
+    function isCardAllowed(card, playerId) {
+        // Check if player already played within this trick
+        var player = findPlayerById(playerId);
+        if (player.hasPlayedCard()) {
+            return false;
         }
 
-        // Check if card color matches the color of the first normal card
-        for (var indexOfCard = 0; indexOfCard < m_cardsOnTable.length; indexOfCard++) {
-            if (m_cardsOnTable[indexOfCard].color != 'wizard' || m_cardsOnTable[indexOfCard].color != 'fool') {
-                if (m_cardsOnTable[indexOfCard].color == card.color) {
-                    return true;
-                }
-                else {
-                    // Get the players current cards
-                    var player        = findPlayerBySocketId(socketId);
-                    var playerCards   = player.getCards();
-                    var searchedColor = m_cardsOnTable[indexOfCard].color;
+        // Check if we have not already a trickwinner and the first card is not played
+        if (m_lastTrickWinner === null && m_firstPlayedCard === null) {
+            // Check if the player is allowed to play the first card
+            if (getIndexOfDealersNeighbor() === getPlayersIndex(playerId)) {
+                m_firstPlayedCard = card;
+                setFirstPlayedColor(card.color);
+                return true;
+            }
+        }
+        else if (m_lastTrickWinner !== null && m_firstPlayedCard === null) {
+            // Check if player of the first card is the last trick winner
+            if (m_lastTrickWinner.getId() === playerId) {
+                m_firstPlayedCard = card;
+                setFirstPlayedColor(card.color);
+                return true;
+            }
+        }
+        else {
+            // Check if the played card is a wizard or a fool
+            if (card.color === 'wizard' || card.color === 'fool' ) {
+                return true;
+            }
 
-                    // Check if player has a matching color
-                    for (var indexOfPlayerCards = 0; indexOfPlayerCards < playerCards.length; indexOfPlayerCards++) {
-                        if (playerCards[indexOfPlayerCards].color == searchedColor) {
-                            return false;
-                        }
-                    }
-                }
+            // Check if the suit color is already set
+            if (m_firstPlayedColor === '') {
+                // Set suit color
+                setFirstPlayedColor(card.color);
+                return true;
+            }
+
+            // Check if card matches suit color
+            if (m_firstPlayedColor === card.color) {
+                return true
+            }
+
+            // Check if player hasn't a matching color
+            if (player.hasCardWithColor(m_firstPlayedCard.color) === false)  {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
-    function playCard(card, socketId) {
-        // Add players socket id to card
-        card.playerSocketId = socketId;
+    function playCard(card, playerId) {
+        // Add players id to card
+        card.playerId = playerId;
 
         // Add card to table and notify host
         m_cardsOnTable.push(card);
-        m_hostSocket.emit('playerHasThrownCard', card);
+        m_host.emit('playerHasThrownCard', card);
 
-        // Remove card from player
-        findPlayerBySocketId(socketId).removeCard(card);
+        // Remove card from player and set that he has played a card
+        var player = findPlayerById(playerId);
+        player.removeCard(card);
+        player.setHasPlayedCard(true);
 
         // Check if all cards for this round are played
         if (m_cardsOnTable.length === m_numberOfPlayers) {
@@ -139,9 +179,7 @@ exports.GameTable = function(gameId, hostSocket) {
 
             // Check if the round is over
             if (m_playedTricks === m_currentRound) {
-                // TODO: Calculate points
                 var points = calculateScores();
-
                 m_currentRound++;
 
                 // Check if game is over
@@ -149,9 +187,18 @@ exports.GameTable = function(gameId, hostSocket) {
                     // TODO: game is over logic
                 }
                 else {
-                    m_hostSocket.emit('roundIsOver', points);
-                    m_playedTricks = 0;
-                    m_trumpColor = '';
+                    // Reset values to be ready for a new round
+                    m_host.emit('roundIsOver', points);
+                    m_playedTricks     = 0;
+                    m_firstPlayedCard  = null;
+                    m_firstPlayedColor = '';
+                    m_lastTrickWinner  = null;
+                    m_trumpColor       = null;
+                    // Count up dealers index
+                    m_indexOfDealer++;
+                    if (m_indexOfDealer === m_numberOfPlayers) {
+                        m_indexOfDealer = 0;
+                    }
                 }
             }
         }
@@ -162,44 +209,47 @@ exports.GameTable = function(gameId, hostSocket) {
 
         // Calculate the points for the current round
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            var numberOfGuessedTricks = m_players[indexOfPlayer].getGuessedTricks();
-            var numberOfCurrentTricks = m_players[indexOfPlayer].getCurrentTricks();
-            var difference = Math.abs(numberOfGuessedTricks - numberOfCurrentTricks);
+            var numberOfGuessedTricks = m_players[indexOfPlayer].getGuessedTricks(m_currentRound);
+            var numberOfWonTricks = m_players[indexOfPlayer].getWonTricks(m_currentRound);
+            var difference = Math.abs(numberOfGuessedTricks - numberOfWonTricks);
             var pointsForPlayer = 0;
 
-            if (difference != 0) {
+            if (difference !== 0) {
                 // Player is wrong
                 pointsForPlayer = -10 * difference;
-                m_players[indexOfPlayer].removePoints(pointsForPlayer);
             }
             else {
                 // Player is right
-                pointsForPlayer = 20 + 10 * numberOfCurrentTricks;
-                m_players[indexOfPlayer].addPoints(pointsForPlayer);
+                pointsForPlayer = 20 + 10 * numberOfWonTricks;
             }
 
-            // Save the points into the object by players socketId
-            var socketId = m_players[indexOfPlayer].socket.id;
-            points[socketId] = pointsForPlayer;
+            m_players[indexOfPlayer].addRoundScore(m_currentRound, pointsForPlayer);
 
-            // Reset players tricks
-            m_players[indexOfPlayer].clearTricks();
+            // Save the points into the object by players id
+            var playerId = m_players[indexOfPlayer].getId();
+            points[playerId] = pointsForPlayer;
         }
 
         return points;
     }
 
-    function setTrickWinner(socketId) {
+    function setTrickWinner(playerId) {
         // Get player
-        var winner = findPlayerBySocketId(socketId);
-        winner.addTrick();
+        var player = findPlayerById(playerId);
+        player.wonTrick(m_currentRound);
 
         // Notify host and players about the winner
-        m_hostSocket.emit('playerHasWonTrick', winner.name);
-        emitToPlayers('playerHasWonTrick', winner.name);
+        m_host.emit('playerHasWonTrick', player.getName());
+        emitToPlayers('playerHasWonTrick', player.getName());
 
-        // Empty array
-        m_cardsOnTable = [];
+        m_lastTrickWinner  = player;
+        m_cardsOnTable     = [];
+        m_trumpColor       = '';
+        m_firstPlayedCard  = null;
+        m_firstPlayedColor = '';
+        for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
+            m_players[indexOfPlayer].setHasPlayedCard(false);
+        }
     }
 
     function calculateTrickWinner() {
@@ -208,17 +258,17 @@ exports.GameTable = function(gameId, hostSocket) {
         var winnerCard = null;
 
         for (var indexOfCard = 0; indexOfCard < m_cardsOnTable.length; indexOfCard++) {
-            if (m_cardsOnTable[indexOfCard].color == 'wizard') {
+            if (m_cardsOnTable[indexOfCard].color === 'wizard') {
                 // Wizard detected
-                setTrickWinner(m_cardsOnTable[indexOfCard].playerSocketId);
+                setTrickWinner(m_cardsOnTable[indexOfCard].playerId);
                 return;
             }
-            else if (m_cardsOnTable[indexOfCard].color == 'fool') {
+            else if (m_cardsOnTable[indexOfCard].color === 'fool') {
                 // Do nothing and check the next card
                 foolCount++;
                 if (m_cardsOnTable.length === foolCount) {
                     // Only fools detected
-                    setTrickWinner(m_cardsOnTable[0].playerSocketId);
+                    setTrickWinner(m_cardsOnTable[0].playerId);
                     return;
                 }
             }
@@ -232,7 +282,7 @@ exports.GameTable = function(gameId, hostSocket) {
         winnerCard = comparableCards[0];
 
 
-        if (m_trumpColor == '' || m_trumpColor == 'wizard' || m_trumpColor == 'fool') {
+        if (m_trumpColor === '' || m_trumpColor === 'wizard' || m_trumpColor === 'fool') {
             for (var i = 1; i < comparableCards.length; i++) {
                 // Check if color is the same
                 if(comparableCards[i].color === winnerCard.color) {
@@ -272,27 +322,24 @@ exports.GameTable = function(gameId, hostSocket) {
             }
         }
 
-
-
         // Set winner
-        setTrickWinner(winnerCard.playerSocketId);
+        setTrickWinner(winnerCard.playerId);
     }
 
     function getCurrentRound() {
-        console.log('Round: ' + m_currentRound);
         return m_currentRound;
     }
 
     return {
-        gameId            : m_gameId,
-        hostSocket        : m_hostSocket,
-        addPlayer         : addPlayer,
-        removePlayer      : removePlayer,
-        getCurrentRound   : getCurrentRound,
-        getNumberOfRounds : getNumberOfRounds,
-        dealCards         : dealCards,
-        playCard          : playCard,
-        isCardAllowed     : isCardAllowed,
+        gameId              : m_gameId,
+        host                : m_host,
+        addPlayer           : addPlayer,
+        removePlayer        : removePlayer,
+        getCurrentRound     : getCurrentRound,
+        getNumberOfRounds   : getNumberOfRounds,
+        dealCards           : dealCards,
+        playCard            : playCard,
+        isCardAllowed       : isCardAllowed,
         playerGuessedTricks : playerGuessedTricks
     }
 };

@@ -34,8 +34,8 @@
           <td class="round">{{ $index + 1 }}</td>
           <td ng-repeat="player in players" class="in-use score-set">
             <div class="scores table full-width full-height">
-              <div class="guessedNumber table-cell center">{{ scores[$parent.$index + 1][player.socketId].guessedTricks }}</div>
-              <div class="score table-cell center">{{ scores[$parent.$index + 1][player.socketId].score }}</div>
+              <div class="guessedNumber table-cell center">{{ scores[$parent.$index + 1][player.playerId].guessedTricks }}</div>
+              <div class="score table-cell center">{{ scores[$parent.$index + 1][player.playerId].score }}</div>
             </div>
           </td>
           <td ng-repeat="i in range(6 - players.length)" class="unused"></td>

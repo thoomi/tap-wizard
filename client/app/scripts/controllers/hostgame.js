@@ -22,9 +22,8 @@ angular.module('clientApp')
     });
 
     socket.on('playerGuessedTricks', function(data) {
-      $scope.scores[$scope.round.current][data.socketId] = {};
-      $scope.scores[$scope.round.current][data.socketId].guessedTricks = data.guessedTricks;
-      //hostGameData.findPlayerBySocketId(data.socketId).guessedTricks = data.guessedTricks;
+      $scope.scores[$scope.round.current][data.playerId] = {};
+      $scope.scores[$scope.round.current][data.playerId].guessedTricks = data.guessedTricks;
     });
 
     socket.on('playerHasWonTrick', function(name) {
@@ -32,18 +31,18 @@ angular.module('clientApp')
       $timeout(function() {
         $scope.cards = [];
         console.log('executed');
-      },8000);
+      },5000);
     });
 
     socket.on('roundIsOver', function(points) {
       $scope.trumpCard = {};
 
       for (var indexOfPlayer = 0; indexOfPlayer < $scope.players.length; indexOfPlayer++) {
-        var socketId     = $scope.players[indexOfPlayer].socketId
+        var playerId     = $scope.players[indexOfPlayer].playerId
         var currentScore = $scope.players[indexOfPlayer].points;
-        var scoreToAdd   = points[socketId];
+        var scoreToAdd   = points[playerId];
 
-        $scope.scores[$scope.round.current][socketId].score = currentScore + scoreToAdd;
+        $scope.scores[$scope.round.current][playerId].score = currentScore + scoreToAdd;
         $scope.players[indexOfPlayer].points = currentScore + scoreToAdd;
       }
 

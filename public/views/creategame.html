@@ -1,7 +1,7 @@
 <div class="creategame table">
   <div class="hostgame table-cell center">
       <h2>Game ID: {{ game.id }}</h2>
-      <button ng-click="prepareGameForPlay()" class="btn" ng-disabled="game.players.length <= 2">{{ game.play | uppercase }}</button>
+      <button ng-click="prepareGameForPlay()" class="btn" ng-disabled="isStartDisabled" ng-model="isStartDisabled">{{ game.play | uppercase }}</button>
   </div>
 
   <div class="table-cell center left-padding">

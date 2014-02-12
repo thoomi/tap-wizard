@@ -1,23 +1,23 @@
-exports.Player = function(socket, gameId, name) {
+var Client = require('./client.js').Client;
+
+exports.Player = function(sessionId, name, gameId) {
     'use strict';
 
-    if (typeof(socket) === 'undefined') { throw "Parameter socket is not defined!"; }
-    if (typeof(gameId) === 'undefined') { throw "Parameter gameId is not defined!"; }
-    if (typeof(name) === 'undefined') { throw "Parameter name is not defined!"; }
+    var publicApi       = {};
+    publicApi.__proto__ = new Client(sessionId);
 
-    var m_socket        = socket;
+
     var m_gameId        = gameId;
     var m_name          = name;
     var m_setOfCards    = [];
-    var m_score         = 0;
-    var m_guessedTricks = 0;
-    var m_currentTricks = 0;
+    var m_perRoundData  = [];
+    var m_hasPlayedCard = false;
 
 
-    function addCard(card) {
+    publicApi.addCard = function (card) {
         m_setOfCards.push(card);
     }
-    function removeCard(card) {
+    publicApi.removeCard = function (card) {
         for (var indexOfCard = 0; indexOfCard < m_setOfCards.length; indexOfCard++) {
             if(m_setOfCards[indexOfCard].color === card.color && m_setOfCards[indexOfCard].value === card.value) {
                 m_setOfCards.splice(indexOfCard, 1);
@@ -25,48 +25,46 @@ exports.Player = function(socket, gameId, name) {
         }
     }
 
-    function addPoints(points) {
-        m_score += Math.abs(parseInt(points));
-    }
-    function removePoints(points) {
-        m_score -= Math.abs(parseInt(points));
+    publicApi.addRoundScore = function (round, roundScore) {
+        m_perRoundData[round].score = parseInt(roundScore);
     }
 
-    function setGuessedTricks(guessedNumber) {
-        m_guessedTricks = parseInt(guessedNumber);
+    publicApi.setGuessedTricks = function (round, guessedNumber) {
+        m_perRoundData[round] = {};
+        m_perRoundData[round].guessedTricks = parseInt(guessedNumber);
+        m_perRoundData[round].wonTricks     = 0;
     }
-    function addTrick() {
-        m_currentTricks++;
-    }
-    function clearTricks() {
-        m_guessedTricks = 0;
-        m_currentTricks = 0;
+    publicApi.wonTrick = function (round) {
+        m_perRoundData[round].wonTricks++;
     }
 
-    function getCurrentTricks() {
-        return m_currentTricks;
+
+    publicApi.getWonTricks = function (round) {
+        return m_perRoundData[round].wonTricks;
     }
-    function getGuessedTricks() {
-        return m_guessedTricks;
+    publicApi.getGuessedTricks = function (round) {
+        return  m_perRoundData[round].guessedTricks;
     }
 
-    function getCards() {
-        return m_setOfCards;
+    publicApi.hasCardWithColor = function (color) {
+        for (var indexOfCard = 0; indexOfCard < m_setOfCards.length; indexOfCard++) {
+            if (m_setOfCards[indexOfCard].color === color) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    return {
-        socket           : m_socket,
-        gameId           : m_gameId,
-        name             : m_name,
-        addCard          : addCard,
-        removeCard       : removeCard,
-        addTrick         : addTrick,
-        clearTricks      : clearTricks,
-        setGuessedTricks : setGuessedTricks,
-        getCurrentTricks : getCurrentTricks,
-        getGuessedTricks : getGuessedTricks,
-        addPoints        : addPoints,
-        removePoints     : removePoints,
-        getCards         : getCards
+    publicApi.hasPlayedCard = function () {
+        return m_hasPlayedCard;
     }
+    publicApi.setHasPlayedCard = function (value) {
+        m_hasPlayedCard = value;
+    }
+
+    publicApi.getName = function () {
+        return m_name;
+    }
+
+    return publicApi;
 };

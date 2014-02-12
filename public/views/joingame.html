@@ -1,9 +1,28 @@
 <div class="full-width full-height playergame table">
   <div class="joingame table-cell center">
-      <div class="input-group">
-        <div class="input-control"><input type="text" ng-model="gameId" placeholder="Game ID"></div>
-        <div class="input-control"><input type="text" ng-model="playerName" placeholder="Name" maxlength="3"></div>
+    <div class="input-group">
+      <div class="input-control"><input type="text" ng-model="gameId" placeholder="Game ID" maxlength="6"></div>
+      <div class="input-control"><input type="text" ng-model="playerName" placeholder="Name" maxlength="3"></div>
+    </div>
+    <button class="btn" ng-click="connectToGame()" ng-disabled="isConnectDisabled" ng-model="isConnectDisabled">{{ joinGameText | uppercase }}
+      <div class="windows8" ng-hide="!isConnectDisabled">
+        <div class="wBall" id="wBall_1">
+          <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_2">
+          <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_3">
+          <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_4">
+          <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_5">
+          <div class="wInnerBall"></div>
+        </div>
       </div>
-      <a class="btn" ng-click="connectToGame()">{{ joinGameText | uppercase }}</a>
+    </button>
+
   </div>
 </div>

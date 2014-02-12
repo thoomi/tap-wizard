@@ -31,9 +31,9 @@ angular.module('clientApp')
       }
     });
 
-    socket.on('playerLeftGame', function(data) {
+    socket.on('playerLeftGame', function(id) {
       for (var indexOfPlayer = 0; indexOfPlayer < $scope.game.players.length; indexOfPlayer++) {
-        if ($scope.game.players[indexOfPlayer].mySocketId === data) {
+        if ($scope.game.players[indexOfPlayer].playerId === id) {
           $scope.game.players.splice(indexOfPlayer, 1);
         };
       };

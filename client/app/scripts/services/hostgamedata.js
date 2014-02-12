@@ -7,9 +7,9 @@ angular.module('clientApp')
     var currentRound = 1;
     var maxRounds    = 20;
 
-    function findPlayerBySocketId(socketId) {
+    function findPlayerById(playerId) {
       for (var indexOfPlayer = 0; indexOfPlayer < players.length; indexOfPlayer++) {
-            if(players[indexOfPlayer].socketId === socketId) {
+            if(players[indexOfPlayer].playerId === playerId) {
                 return players[indexOfPlayer];
             }
         }
@@ -22,6 +22,6 @@ angular.module('clientApp')
       currentRound    : currentRound,
       maxRounds       : maxRounds,
       numberOfPlayers : players.length,
-      findPlayerBySocketId : findPlayerBySocketId
+      findPlayerById  : findPlayerById
     };
   });
