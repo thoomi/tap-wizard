@@ -193,7 +193,7 @@ exports.GameTable = function(gameId, host) {
                     m_firstPlayedCard  = null;
                     m_firstPlayedColor = '';
                     m_lastTrickWinner  = null;
-                    m_trumpColor       = null;
+                    m_trumpColor       = '';
                     // Count up dealers index
                     m_indexOfDealer++;
                     if (m_indexOfDealer === m_numberOfPlayers) {
@@ -244,7 +244,6 @@ exports.GameTable = function(gameId, host) {
 
         m_lastTrickWinner  = player;
         m_cardsOnTable     = [];
-        m_trumpColor       = '';
         m_firstPlayedCard  = null;
         m_firstPlayedColor = '';
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
@@ -280,7 +279,6 @@ exports.GameTable = function(gameId, host) {
 
         // Set the winner card
         winnerCard = comparableCards[0];
-
 
         if (m_trumpColor === '' || m_trumpColor === 'wizard' || m_trumpColor === 'fool') {
             for (var i = 1; i < comparableCards.length; i++) {
@@ -318,7 +316,6 @@ exports.GameTable = function(gameId, host) {
                         }
                     }
                 }
-
             }
         }
 
