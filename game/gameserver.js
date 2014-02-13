@@ -8,10 +8,7 @@ var sessionSockets;
 var gameTables  = {};
 
 /**
-* This function is called by index.js to initialize a new game instance.
-*
-* @param sio The Socket.IO library
-* @param socket The socket object for the connected client.
+* This function is called by app.js to initialize a new game instance.
 */
 exports.initializeListeners = function(sio, socket, sSockets) {
     io = sio;

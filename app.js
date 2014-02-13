@@ -9,11 +9,10 @@ var sio          = require('session.socket.io');
 var gameserver   = require('./game/gameserver.js');
 var path         = require('path');
 var fs           = require('fs');
-var connect      = require('connect');
 
 
 var cookieParser = express.cookieParser('0123456789');
-var sessionStore = new connect.middleware.session.MemoryStore();
+var sessionStore = new express.session.MemoryStore();
 
 
 app.set('port', process.env.PORT || 3000);
@@ -27,19 +26,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 var sessionSockets = new sio(io, sessionStore, cookieParser);
 
 
-app.get('/', function(req, res) {
+/*app.get('/', function(req, res) {
     fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
         res.send(text);
     });
-});
+});*/
 
 // Development
-/*
 app.get('/', function(req, res) {
     fs.readFile(__dirname + '/client/app/index.html', 'utf8', function(err, text){
         res.send(text);
     });
-});*/
+});
 
 
 server.listen(app.get('port'), function(){

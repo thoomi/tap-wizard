@@ -2,7 +2,8 @@
 
 angular.module('clientApp')
  .factory('socket', function ($rootScope) {
-        var socket = io.connect('http://wiz.herokuapp.com');
+        //var socket = io.connect('http://wiz.herokuapp.com');
+        var socket = io.connect('http://localhost:3000');
         return {
             on: function (eventName, callback) {
                 socket.on(eventName, function () {

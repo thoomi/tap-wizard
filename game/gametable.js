@@ -22,14 +22,10 @@ exports.GameTable = function(gameId, host) {
 
 
     function addPlayer(player) {
-        // Save the player
         m_players.push(player);
-
-        // Count players
         m_numberOfPlayers++;
     }
     function removePlayer(sessionId) {
-
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
             if(m_players[indexOfPlayer].getId() === sessionId) {
                 m_players.splice(indexOfPlayer, 1);
@@ -311,7 +307,7 @@ exports.GameTable = function(gameId, host) {
                             }
                         }
                         else {
-                            // Card is a trump and current winner card not
+                            // Card is a trump and current winner card is not
                             winnerCard = comparableCards[i];
                         }
                     }
