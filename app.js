@@ -25,8 +25,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var sessionSockets = new sio(io, sessionStore, cookieParser);
 
-
-/*app.get('/', function(req, res) {
+/*
+app.get('/', function(req, res) {
     fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
         res.send(text);
     });

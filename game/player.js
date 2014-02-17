@@ -11,6 +11,7 @@ exports.Player = function(sessionId, name, gameId) {
     var m_name          = name;
     var m_setOfCards    = [];
     var m_perRoundData  = [];
+    var m_score         = 0;
     var m_hasPlayedCard = false;
 
 
@@ -27,6 +28,10 @@ exports.Player = function(sessionId, name, gameId) {
 
     publicApi.addRoundScore = function (round, roundScore) {
         m_perRoundData[round].score = parseInt(roundScore);
+        m_score += parseInt(roundScore);
+    }
+    publicApi.getScore = function() {
+        return m_score;
     }
 
     publicApi.setGuessedTricks = function (round, guessedNumber) {

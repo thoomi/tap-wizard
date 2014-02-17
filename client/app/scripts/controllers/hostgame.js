@@ -9,6 +9,8 @@ angular.module('clientApp')
     $scope.trickwinner  = '';
     $scope.trumpCard    = {};
     $scope.scores       = [];
+    $scope.gameOver     = false;
+    $scope.winnerName   = '';
 
 
     $scope.isStartRoundDisabled = false;
@@ -48,6 +50,11 @@ angular.module('clientApp')
 
       $scope.round.current++;
       $scope.isStartRoundDisabled = false;
+    });
+
+    socket.on('gameIsOver', function(winnerName) {
+      $scope.winnerName = winnerName;
+      $scope.gameOver = true;
     });
 
     $scope.startRound = function() {

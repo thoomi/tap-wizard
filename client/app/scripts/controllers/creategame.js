@@ -35,8 +35,14 @@ angular.module('clientApp')
       for (var indexOfPlayer = 0; indexOfPlayer < $scope.game.players.length; indexOfPlayer++) {
         if ($scope.game.players[indexOfPlayer].playerId === id) {
           $scope.game.players.splice(indexOfPlayer, 1);
-        };
-      };
+          hostGameData.players.splice(indexOfPlayer, 1);
+        }
+      }
+
+      // Disable start button if not enough players have joined
+      if ($scope.game.players.length < 3) {
+        $scope.isStartDisabled = true;
+      }
     });
 
     socket.on('beginNewGame', function(data) {

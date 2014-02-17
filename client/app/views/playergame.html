@@ -13,4 +13,6 @@
     <button ng-repeat="i in range(21)" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index || isGuessTricksDisabled" ng-model="isGuessTricksDisabled">{{ $index }}</button>
   </div>
 </div>
-
+<div ng-show="gameOver">
+  <modal-dialog info="winnerName" ></modal-dialog>
+</div>

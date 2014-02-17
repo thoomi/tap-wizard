@@ -19,6 +19,7 @@ exports.GameTable = function(gameId, host) {
     var m_firstPlayedColor  = '';
     var m_indexOfDealer     = 0;
     var m_lastTrickWinner   = null;
+    var m_guessedTrickCount = 0;
 
 
     function addPlayer(player) {
@@ -47,14 +48,19 @@ exports.GameTable = function(gameId, host) {
         return 0;
     }
 
+    function prepareNewGame() {
+        m_players[m_indexOfDealer].emit('playerIsDealer');
+        m_gameState = 'running';
+    }
+
     function emitToPlayers(message, data) {
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
             m_players[indexOfPlayer].emit(message, data);
         }
     }
 
-
     function dealCards() {
+
         var numberOfdealedCards = 0;
         // Shuffle card deck
         m_deck.shuffle();
@@ -74,6 +80,8 @@ exports.GameTable = function(gameId, host) {
             m_trumpColor = trumpCard.color;
             m_host.emit('newTrumpCard', trumpCard);
         }
+
+        m_players[getIndexOfDealersNeighbor()].emit('playerBeginTrick');
     }
 
     function getIndexOfDealersNeighbor() {
@@ -96,6 +104,15 @@ exports.GameTable = function(gameId, host) {
 
         var data = { playerId : playerId, guessedTricks : number, round: m_currentRound };
         m_host.emit('playerGuessedTricks', data);
+
+        m_guessedTrickCount++;
+
+        // Check if all players guessed their tricks
+        if (m_guessedTrickCount === m_numberOfPlayers) {
+            emitToPlayers('allTricksGuessed');
+            m_guessedTrickCount = 0;
+            m_players[getIndexOfDealersNeighbor()].emit('playerBeginTrick');
+        }
     }
 
     function setFirstPlayedColor(color) {
@@ -180,7 +197,7 @@ exports.GameTable = function(gameId, host) {
 
                 // Check if game is over
                 if (m_currentRound === m_maxRounds) {
-                    // TODO: game is over logic
+                    gameOver();
                 }
                 else {
                     // Reset values to be ready for a new round
@@ -195,9 +212,31 @@ exports.GameTable = function(gameId, host) {
                     if (m_indexOfDealer === m_numberOfPlayers) {
                         m_indexOfDealer = 0;
                     }
+                    // Notify the dealer
+                    m_players[m_indexOfDealer].emit('playerIsDealer');
                 }
             }
         }
+    }
+
+    function gameOver() {
+        var winner = getGameWinner();
+        if (winner != undefined) {
+            m_host.emit('gameIsOver', winner.getName());
+            emitToPlayers('gameIsOver', winner.getName());
+        }
+
+        m_gameState = 'gameover';
+    }
+
+    function getGameWinner() {
+        var winner = m_players[0];
+        for (var indexOfPlayer = 1; indexOfPlayer < m_players.length; indexOfPlayer++) {
+            if (winner.getScore() < m_players[indexOfPlayer].getScore()) {
+                winner = m_players[indexOfPlayer];
+            }
+        }
+        return winner;
     }
 
     function calculateScores() {
@@ -323,6 +362,10 @@ exports.GameTable = function(gameId, host) {
         return m_currentRound;
     }
 
+    function getState() {
+        return m_gameState;
+    }
+
     return {
         gameId              : m_gameId,
         host                : m_host,
@@ -333,6 +376,9 @@ exports.GameTable = function(gameId, host) {
         dealCards           : dealCards,
         playCard            : playCard,
         isCardAllowed       : isCardAllowed,
-        playerGuessedTricks : playerGuessedTricks
+        playerGuessedTricks : playerGuessedTricks,
+        prepareNewGame      : prepareNewGame,
+        gameOver            : gameOver,
+        getState            : getState
     }
 };

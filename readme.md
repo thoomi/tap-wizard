@@ -8,7 +8,7 @@ If enough players have joined the game is ready to start and by hitting the "sta
 - Implement "game over" logic
 - Implement "restart game" logic
 - Implement disconnect and reconnect handling in running games
-- Implement drag and swipe on clients cards
+- Implement drag and swipe on client cards
 - Write tests for all client side angular.js code
 - Write tests for all server side code
 - Rethink server side architecture (consider observers, command, etc.. )

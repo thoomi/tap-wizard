@@ -86,6 +86,7 @@ function hostPrepareGame() {
             if (gameTable != undefined) {
                 var data = { maxRounds : gameTable.getNumberOfRounds(), currentRound : gameTable.getCurrentRound() };
                 io.sockets.in(session.gameId).emit('beginNewGame', data);
+                gameTable.prepareNewGame();
             }
         }
         else {
@@ -103,7 +104,7 @@ function hostStartRound() {
             var gameTable = gameTables[session.gameId];
 
             if (gameTable != undefined) {
-                io.sockets.in(session.gameId).emit('startNewRound', gameTable.getCurrentRound() );
+                io.sockets.in(session.gameId).emit('startNewRound', gameTable.getCurrentRound());
                 gameTable.dealCards();
             }
         }
@@ -218,7 +219,6 @@ function playerGuessTricks(data) {
 
 /**
 * A player or the host disconnected
-* @param data gameId
 */
 function disconnect() {
     var socket = this;
@@ -229,17 +229,24 @@ function disconnect() {
             // Get the game the player or host is in
             var gameTable = gameTables[session.gameId];
 
-            // TODO: Pause the game table
-
             if(gameTable != undefined) {
                 if(gameTable.host.getId() === session.id) {
                     io.sockets.in(gameTable.gameId).emit('hostDisconnected');
+                    gameTable.gameOver();
                     // Delete game table
                     delete gameTable;
                 }
                 else {
-                    gameTable.removePlayer(session.id);
-                    io.sockets.in(gameTable.gameId).emit('playerLeftGame', session.id);
+                    if (gameTable.getState() === 'waiting') {
+                        gameTable.removePlayer(session.id);
+                        io.sockets.in(gameTable.gameId).emit('playerLeftGame', session.id);
+                    }
+                    else {
+                        // This is a very, very simple solution for the disconnect problem...
+                        gameTable.gameOver();
+                        delete gameTable;
+                    }
+
                 }
             }
         }
