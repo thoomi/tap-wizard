@@ -4,6 +4,10 @@ angular.module('clientApp')
   .controller('PlayergameCtrl', function ($scope, socket, gameData) {
 
     $scope.cards = [];
+
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'blue', value: 9});
+
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
     $scope.isGuessTricksDisabled = true;
@@ -23,7 +27,7 @@ angular.module('clientApp')
     });
 
     socket.on('cardNotAllowed', function(card) {
-      $scope.notification = "Sorry, card is not allowed: " + card.color + " " + card.value;
+      $scope.notification = "Sorry, card is not allowed: " + card.suit + " " + card.value;
       $scope.cards.push(card);
       playedCardThisTrick = false;
     });
@@ -68,7 +72,7 @@ angular.module('clientApp')
 
         // Remove card from array
         for (var indexOfCard = 0; indexOfCard < $scope.cards.length; indexOfCard++) {
-            if($scope.cards[indexOfCard].color === card.color && $scope.cards[indexOfCard].value === card.value) {
+            if($scope.cards[indexOfCard].suit === card.suit && $scope.cards[indexOfCard].value === card.value) {
                 $scope.cards.splice(indexOfCard, 1);
             }
         }
