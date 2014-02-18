@@ -4,6 +4,8 @@ var Card = require('./card.js').Card;
 exports.Deck = function() {
     'use strict';
 
+    var publicApi = {};
+
     var m_deckOfCards = [
         Card('red',  1),
         Card('red',  2),
@@ -72,13 +74,14 @@ exports.Deck = function() {
         Card('fool', 'N')
     ];
 
-    function shuffle() {
+
+    publicApi.cards = m_deckOfCards;
+
+    publicApi.numberOfCards = m_deckOfCards.length;
+
+    publicApi.shuffle = function () {
         util.shuffleArray(m_deckOfCards);
     }
 
-    return {
-        cards         : m_deckOfCards,
-        numberOfCards : m_deckOfCards.length,
-        shuffle       : shuffle
-    }
+    return publicApi;
 };

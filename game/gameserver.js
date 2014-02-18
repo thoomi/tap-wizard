@@ -139,7 +139,7 @@ function playerJoinGame(data) {
             if ( room != undefined && gameTable != undefined ) {
 
                 // Create a new player
-                var player = new Player(session.id, data.playerName, data.gameId);
+                var player = new Player(session.id, data.playerName);
                 player.setSocket(socket);
 
                 // Join the room and the game

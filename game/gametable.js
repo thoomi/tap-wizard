@@ -14,9 +14,9 @@ exports.GameTable = function(gameId, host) {
     var m_maxRounds         = 0;
     var m_currentRound      = 1;
     var m_playedTricks      = 0;
-    var m_trumpColor        = '';
+    var m_trumpSuit         = '';
     var m_firstPlayedCard   = null;
-    var m_firstPlayedColor  = '';
+    var m_firstPlayedSuit   = '';
     var m_indexOfDealer     = 0;
     var m_lastTrickWinner   = null;
     var m_guessedTrickCount = 0;
@@ -26,9 +26,9 @@ exports.GameTable = function(gameId, host) {
         m_players.push(player);
         m_numberOfPlayers++;
     }
-    function removePlayer(sessionId) {
+    function removePlayer(id) {
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            if(m_players[indexOfPlayer].getId() === sessionId) {
+            if(m_players[indexOfPlayer].getId() === id) {
                 m_players.splice(indexOfPlayer, 1);
             }
         }
@@ -36,10 +36,7 @@ exports.GameTable = function(gameId, host) {
         m_numberOfPlayers--;
     }
 
-    function findPlayerById(id) {
-        return m_players[getPlayersIndex(id)];
-    }
-    function getPlayersIndex(id) {
+    function getIndexOfPlayer(id) {
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
             if(m_players[indexOfPlayer].getId() === id) {
                 return indexOfPlayer;
@@ -47,6 +44,11 @@ exports.GameTable = function(gameId, host) {
         }
         return 0;
     }
+    function findPlayerById(id) {
+
+        return m_players[getIndexOfPlayer(id)];
+    }
+
 
     function prepareNewGame() {
         m_players[m_indexOfDealer].emit('playerIsDealer');
@@ -60,7 +62,6 @@ exports.GameTable = function(gameId, host) {
     }
 
     function dealCards() {
-
         var numberOfdealedCards = 0;
         // Shuffle card deck
         m_deck.shuffle();
@@ -77,7 +78,7 @@ exports.GameTable = function(gameId, host) {
         // Choose trump card
         var trumpCard = m_deck.cards[numberOfdealedCards];
         if (trumpCard != undefined) {
-            m_trumpColor = trumpCard.color;
+            m_trumpSuit = trumpCard.suit;
             m_host.emit('newTrumpCard', trumpCard);
         }
 
@@ -115,25 +116,25 @@ exports.GameTable = function(gameId, host) {
         }
     }
 
-    function setFirstPlayedColor(color) {
-        if(color !== 'wizard' && color !== 'fool') {
-            m_firstPlayedColor = color;
+    function setFirstPlayedSuit(suit) {
+        if(suit !== 'wizard' && suit !== 'fool') {
+            m_firstPlayedSuit = suit;
         }
     }
 
     function isCardAllowed(card, playerId) {
         // Check if player already played within this trick
         var player = findPlayerById(playerId);
-        if (player.hasPlayedCard()) {
+        if (player.hasPlayedCard) {
             return false;
         }
 
         // Check if we have not already a trickwinner and the first card is not played
         if (m_lastTrickWinner === null && m_firstPlayedCard === null) {
             // Check if the player is allowed to play the first card
-            if (getIndexOfDealersNeighbor() === getPlayersIndex(playerId)) {
+            if (getIndexOfDealersNeighbor() === getIndexOfPlayer(playerId)) {
                 m_firstPlayedCard = card;
-                setFirstPlayedColor(card.color);
+                setFirstPlayedSuit(card.suit);
                 return true;
             }
         }
@@ -141,30 +142,30 @@ exports.GameTable = function(gameId, host) {
             // Check if player of the first card is the last trick winner
             if (m_lastTrickWinner.getId() === playerId) {
                 m_firstPlayedCard = card;
-                setFirstPlayedColor(card.color);
+                setFirstPlayedSuit(card.suit);
                 return true;
             }
         }
         else {
             // Check if the played card is a wizard or a fool
-            if (card.color === 'wizard' || card.color === 'fool' ) {
+            if (card.suit === 'wizard' || card.suit === 'fool' ) {
                 return true;
             }
 
-            // Check if the suit color is already set
-            if (m_firstPlayedColor === '') {
-                // Set suit color
-                setFirstPlayedColor(card.color);
+            // Check if the suit suit is already set
+            if (m_firstPlayedSuit === '') {
+                // Set suit suit
+                setFirstPlayedSuit(card.suit);
                 return true;
             }
 
-            // Check if card matches suit color
-            if (m_firstPlayedColor === card.color) {
+            // Check if card matches suit suit
+            if (m_firstPlayedSuit === card.suit) {
                 return true
             }
 
-            // Check if player hasn't a matching color
-            if (player.hasCardWithColor(m_firstPlayedCard.color) === false)  {
+            // Check if player hasn't a matching suit
+            if (player.hasCardWithSuit(m_firstPlayedCard.suit) === false)  {
                 return true;
             }
         }
@@ -183,7 +184,7 @@ exports.GameTable = function(gameId, host) {
         // Remove card from player and set that he has played a card
         var player = findPlayerById(playerId);
         player.removeCard(card);
-        player.setHasPlayedCard(true);
+        player.hasPlayedCard = true;
 
         // Check if all cards for this round are played
         if (m_cardsOnTable.length === m_numberOfPlayers) {
@@ -204,9 +205,9 @@ exports.GameTable = function(gameId, host) {
                     m_host.emit('roundIsOver', points);
                     m_playedTricks     = 0;
                     m_firstPlayedCard  = null;
-                    m_firstPlayedColor = '';
+                    m_firstPlayedSuit = '';
                     m_lastTrickWinner  = null;
-                    m_trumpColor       = '';
+                    m_trumpSuit       = '';
                     // Count up dealers index
                     m_indexOfDealer++;
                     if (m_indexOfDealer === m_numberOfPlayers) {
@@ -232,7 +233,7 @@ exports.GameTable = function(gameId, host) {
     function getGameWinner() {
         var winner = m_players[0];
         for (var indexOfPlayer = 1; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            if (winner.getScore() < m_players[indexOfPlayer].getScore()) {
+            if (winner.getFullScore() < m_players[indexOfPlayer].getFullScore()) {
                 winner = m_players[indexOfPlayer];
             }
         }
@@ -244,25 +245,11 @@ exports.GameTable = function(gameId, host) {
 
         // Calculate the points for the current round
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            var numberOfGuessedTricks = m_players[indexOfPlayer].getGuessedTricks(m_currentRound);
-            var numberOfWonTricks = m_players[indexOfPlayer].getWonTricks(m_currentRound);
-            var difference = Math.abs(numberOfGuessedTricks - numberOfWonTricks);
-            var pointsForPlayer = 0;
-
-            if (difference !== 0) {
-                // Player is wrong
-                pointsForPlayer = -10 * difference;
-            }
-            else {
-                // Player is right
-                pointsForPlayer = 20 + 10 * numberOfWonTricks;
-            }
-
-            m_players[indexOfPlayer].addRoundScore(m_currentRound, pointsForPlayer);
+            m_players[indexOfPlayer].calculateRoundScore(m_currentRound);
 
             // Save the points into the object by players id
             var playerId = m_players[indexOfPlayer].getId();
-            points[playerId] = pointsForPlayer;
+            points[playerId] = m_players[indexOfPlayer].getRoundScore(m_currentRound);
         }
 
         return points;
@@ -271,7 +258,7 @@ exports.GameTable = function(gameId, host) {
     function setTrickWinner(playerId) {
         // Get player
         var player = findPlayerById(playerId);
-        player.wonTrick(m_currentRound);
+        player.addWonTrick(m_currentRound);
 
         // Notify host and players about the winner
         m_host.emit('playerHasWonTrick', player.getName());
@@ -280,9 +267,9 @@ exports.GameTable = function(gameId, host) {
         m_lastTrickWinner  = player;
         m_cardsOnTable     = [];
         m_firstPlayedCard  = null;
-        m_firstPlayedColor = '';
+        m_firstPlayedSuit = '';
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            m_players[indexOfPlayer].setHasPlayedCard(false);
+            m_players[indexOfPlayer].hasPlayedCard = false;;
         }
     }
 
@@ -292,12 +279,12 @@ exports.GameTable = function(gameId, host) {
         var winnerCard = null;
 
         for (var indexOfCard = 0; indexOfCard < m_cardsOnTable.length; indexOfCard++) {
-            if (m_cardsOnTable[indexOfCard].color === 'wizard') {
+            if (m_cardsOnTable[indexOfCard].suit === 'wizard') {
                 // Wizard detected
                 setTrickWinner(m_cardsOnTable[indexOfCard].playerId);
                 return;
             }
-            else if (m_cardsOnTable[indexOfCard].color === 'fool') {
+            else if (m_cardsOnTable[indexOfCard].suit === 'fool') {
                 // Do nothing and check the next card
                 foolCount++;
                 if (m_cardsOnTable.length === foolCount) {
@@ -315,10 +302,10 @@ exports.GameTable = function(gameId, host) {
         // Set the winner card
         winnerCard = comparableCards[0];
 
-        if (m_trumpColor === '' || m_trumpColor === 'wizard' || m_trumpColor === 'fool') {
+        if (m_trumpSuit === '' || m_trumpSuit === 'wizard' || m_trumpSuit === 'fool') {
             for (var i = 1; i < comparableCards.length; i++) {
-                // Check if color is the same
-                if(comparableCards[i].color === winnerCard.color) {
+                // Check if suit is the same
+                if(comparableCards[i].suit === winnerCard.suit) {
                     // Check if value is higher
                     if(comparableCards[i].value > winnerCard.value) {
                         winnerCard = comparableCards[i];
@@ -328,8 +315,8 @@ exports.GameTable = function(gameId, host) {
         }
         else {
             for (var i = 1; i < comparableCards.length; i++) {
-                // Check if color is the same
-                if(comparableCards[i].color === winnerCard.color) {
+                // Check if suit is the same
+                if(comparableCards[i].suit === winnerCard.suit) {
                     // Check if value is higher
                     if(comparableCards[i].value > winnerCard.value) {
                         winnerCard = comparableCards[i];
@@ -337,9 +324,9 @@ exports.GameTable = function(gameId, host) {
                 }
                 else {
                     // Check if card is a trump
-                    if (comparableCards[i].color === m_trumpColor) {
+                    if (comparableCards[i].suit === m_trumpSuit) {
                         // Check if current winner card is a trump
-                        if (winnerCard.color === m_trumpColor) {
+                        if (winnerCard.suit === m_trumpSuit) {
                             // Both cards are trumps; Compare the values
                             if (comparableCards[i].value > winnerCard.value) {
                                 winnerCard = comparableCards[i];

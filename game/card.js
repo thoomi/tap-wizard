@@ -1,14 +1,13 @@
-exports.Card = function(color, value) {
+exports.Card = function(suit, value) {
     'use strict';
 
-    if (typeof(color) === 'undefined') { throw "Parameter color is not defined!"; }
-    if (typeof(value) === 'undefined') { throw "Parameter value is not defined!"; }
+    var publicApi = {};
 
-    var m_color = color;
-    var m_value = value;
+    if (typeof(suit) === 'undefined') { suit = 'default'; }
+    if (typeof(value) === 'undefined') { value = -1; }
 
-    return {
-        color          : m_color,
-        value          : m_value
-    }
+    publicApi.suit  = suit;
+    publicApi.value = value;
+
+    return publicApi;
 };
