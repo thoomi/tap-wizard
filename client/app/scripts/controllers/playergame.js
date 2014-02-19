@@ -5,6 +5,23 @@ angular.module('clientApp')
 
     $scope.cards = [];
 
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+    $scope.cards.push({suit: 'red', value: 13});
+
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
     $scope.isGuessTricksDisabled = true;

@@ -36,6 +36,7 @@ angular.module('clientApp')
       },
       link: function(scope, element, attr) {
         var startX = 0, startY = 0, x = 0, y = 0;
+        var scrollXStart = 0;
         var parent = element.parent().parent();
 
         // Init touch event to mouse event matcher
@@ -51,23 +52,19 @@ angular.module('clientApp')
 
           element.removeClass('playing-card-animation');
 
-          element.parent().css({
-            'z-index': 99
-          });
-
           startY = event.pageY - y;
-          startX = event.pageX - x;
+          scrollXStart = event.pageX;
           $document.on('mousemove', mousemove);
           $document.on('mouseup', mouseup);
         });
 
         function mousemove(event) {
-          var oldScroll = parent.prop('scrollLeft');
-          //var newScroll =
+          var delta = (event.pageX - scrollXStart) * 0.1;
+          var scrollOld = parent.prop('scrollLeft');
+          parent.prop('scrollLeft', scrollOld - delta);
+
 
           y = event.pageY - startY;
-          x = event.pageX - startX;
-
           if (y > 0) {
             y = 0;
           }
@@ -90,9 +87,6 @@ angular.module('clientApp')
               element.css({
                 top: 0
               });
-              element.parent().css({
-                'z-index': 1
-              });
             }
             else {
               element.css({
@@ -103,9 +97,6 @@ angular.module('clientApp')
           else {
             element.css({
               top: 0,
-            });
-            element.parent().css({
-              'z-index': 1
             });
           }
 
