@@ -32,14 +32,6 @@ module.exports = function (grunt) {
     grunt.initConfig({
         yeoman: yeomanConfig,
         watch: {
-            coffee: {
-                files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-                tasks: ['coffee:dist']
-            },
-            coffeeTest: {
-                files: ['test/spec/{,*/}*.coffee'],
-                tasks: ['coffee:test']
-            },
             styles: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
                 tasks: ['copy:styles', 'autoprefixer']
@@ -53,19 +45,6 @@ module.exports = function (grunt) {
                     '.tmp/styles/{,*/}*.css',
                     '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
                     '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-                ]
-            }
-        },
-        autoprefixer: {
-            options: ['last 1 version'],
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '.tmp/styles/',
-                        src: '{,*/}*.css',
-                        dest: '.tmp/styles/'
-                    }
                 ]
             }
         },
@@ -93,16 +72,6 @@ module.exports = function (grunt) {
                             lrSnippet,
                             mountFolder(connect, '.tmp'),
                             mountFolder(connect, yeomanConfig.app)
-                        ];
-                    }
-                }
-            },
-            test: {
-                options: {
-                    middleware: function (connect) {
-                        return [
-                            mountFolder(connect, '.tmp'),
-                            mountFolder(connect, 'test')
                         ];
                     }
                 }
@@ -146,39 +115,6 @@ module.exports = function (grunt) {
                 '<%= yeoman.app %>/scripts/{,*/}*.js'
             ]
         },
-        coffee: {
-            options: {
-                sourceMap: true,
-                sourceRoot: ''
-            },
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= yeoman.app %>/scripts',
-                        src: '{,*/}*.coffee',
-                        dest: '.tmp/scripts',
-                        ext: '.js'
-                    }
-                ]
-            },
-            test: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'test/spec',
-                        src: '{,*/}*.coffee',
-                        dest: '.tmp/spec',
-                        ext: '.js'
-                    }
-                ]
-            }
-        },
-        // not used since Uglify task does concat,
-        // but still available if needed
-        /*concat: {
-         dist: {}
-         },*/
         rev: {
             dist: {
                 files: {
@@ -228,19 +164,6 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        cssmin: {
-            // By default, your `index.html` <!-- Usemin Block --> will take care of
-            // minification. This option is pre-configured if you do not wish to use
-            // Usemin blocks.
-            // dist: {
-            //   files: {
-            //     '<%= yeoman.dist %>/styles/main.css': [
-            //       '.tmp/styles/{,*/}*.css',
-            //       '<%= yeoman.app %>/styles/{,*/}*.css'
-            //     ]
-            //   }
-            // }
-        },
         htmlmin: {
             dist: {
                 options: {
@@ -289,28 +212,6 @@ module.exports = function (grunt) {
                             'generated/*'
                         ]
                     }
-                    /* example of including other folders:
-                     ,{
-                     expand: true,
-                     //dot: true,
-                     cwd: '<%= yeoman.app %>/vendor/openlayers/theme',
-                     dest: '<%= yeoman.dist %>/theme',
-                     src: ['**']
-                     },
-                     {
-                     expand: true,
-                     //dot: true,
-                     cwd: '<%= yeoman.app %>/vendor/openlayers/img',
-                     dest: '<%= yeoman.dist %>/img',
-                     src: ['**']
-                     },
-                     {
-                     expand: true,
-                     cwd: '<%= yeoman.app %>/bower_components/jquery.ui/themes/base',
-                     dest: '<%= yeoman.dist %>/Content',
-                     src: ['**']
-                     }
-                     */
                 ]
             },
             styles: {
@@ -322,26 +223,14 @@ module.exports = function (grunt) {
         },
         concurrent: {
             server: [
-                'coffee:dist',
-                'copy:styles'
-            ],
-            test: [
-                'coffee',
                 'copy:styles'
             ],
             dist: [
-                'coffee',
                 'copy:styles',
                 'imagemin',
                 'svgmin',
                 'htmlmin'
             ]
-        },
-        karma: {
-            unit: {
-                configFile: 'karma.conf.js',
-                singleRun: true
-            }
         },
         cdnify: {
             dist: {
@@ -379,32 +268,20 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:server',
             'concurrent:server',
-            'autoprefixer',
             'configureProxies',
             'connect:livereload',
             'open',
             'watch'
         ]);
     });
-
-    grunt.registerTask('test', [
-        'clean:server',
-        'concurrent:test',
-        'autoprefixer',
-        'connect:test',
-        'karma'
-    ]);
-
     grunt.registerTask('build', [
         'clean:dist',
         'useminPrepare',
         'concurrent:dist',
-        'autoprefixer',
         'concat',
         'copy:dist',
         'cdnify',
         'ngmin',
-        'cssmin',
         'uglify',
         'rev',
         'usemin'
@@ -412,7 +289,6 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', [
         'jshint',
-        'test',
         'build'
     ]);
 };
