@@ -8,7 +8,7 @@
       <p class="bold text-left">{{ game.wait }}</p>
       <ul class="list-group">
         <li class="list-group-item" ng-repeat="player in game.players">{{ player.playerName }}</li>
-        <li class="list-group-item free-slot" ng-repeat="i in range(6 - game.players.length)">Player {{ ($index + 1) + game.players.length }}</li>
+        <li class="list-group-item free-slot" ng-repeat="i in range(6 - game.players.length) track by $index">Player {{ ($index + 1) + game.players.length }}</li>
       </ul>
   </div>
 </div>

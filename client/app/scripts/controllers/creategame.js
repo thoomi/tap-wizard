@@ -11,6 +11,12 @@ angular.module('clientApp')
 
     $scope.isStartDisabled = true;
 
+    // Clear hostGameData
+    hostGameData.gameId       = 0;
+    hostGameData.currentRound = 1;
+    hostGameData.maxRounds    = 20;
+    hostGameData.players      = [];
+
     // Setup event listeners
     socket.on('connected', function(data) {
       console.log('Websocket connected');

@@ -1,7 +1,7 @@
-<div class="card-panel">
+<div class="card-panel" ng-disabled="isThrowCardsDisabled" ng-model="isThrowCardsDisabled">
   <ul class="playing-card-stack">
-    <li ng-repeat="card in cards" ng-click="throwCard(card)">
-      <tb-playing-card info="card"></tb-playing-card>
+    <li ng-repeat="card in cards track by $index">
+      <tb-playing-card info="card" callback-fn="throwCard(card)"></tb-playing-card>
     </li>
   </ul>
 </div>
@@ -10,7 +10,7 @@
 
 <div class="guess-panel">
   <div class="button-wrapper">
-    <button ng-repeat="i in range(21)" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index || isGuessTricksDisabled" ng-model="isGuessTricksDisabled">{{ $index }}</button>
+    <button ng-repeat="i in range(21) track by $index" ng-click="guessNumberOfTricks($index)" ng-disabled="currentRound < $index || isGuessTricksDisabled" ng-model="isGuessTricksDisabled">{{ $index }}</button>
   </div>
 </div>
 <div ng-show="gameOver">

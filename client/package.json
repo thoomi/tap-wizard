@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.0.0",
+  "version": "0.0.s",
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -43,7 +43,7 @@
     "grunt-contrib-less": "~0.8.1"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": "0.10.x"
   },
   "scripts": {
     "test": "grunt test"

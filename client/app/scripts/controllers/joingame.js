@@ -6,6 +6,11 @@ angular.module('clientApp')
     $scope.joinGameText = 'Join';
     $scope.isConnectDisabled = false;
 
+    // Clear gameData
+    gameData.playerName = 'Player';
+    gameData.gameId     = 0;
+
+
     $scope.connectToGame = function() {
       $scope.isConnectDisabled = true;
       $scope.joinGameText = 'Joining..';

@@ -297,11 +297,13 @@ a {
   position: relative;
 }
 .playing-card-stack li {
+  position: relative;
   display: inline-block;
   margin: 5px 3px 3px 0;
   width: 80px;
   height: 90%;
-  margin-left: -35px;
+  margin-left: -30px;
+  z-index: 1;
 }
 
 .playing-card-stack li:last-child {
@@ -453,6 +455,14 @@ a {
   right: 0;
 }
 
+/* The reverse animation */
+.playing-card-animation {
+  transition-property: top;
+  transition: 0.3s ease all;
+}
+
+
+
 /**********************************************************/
 /* Modal overlay directive
 /**********************************************************/
@@ -490,7 +500,6 @@ a {
   padding:10px;
   text-align: center;
 }
-
 
 
 /**********************************************************/

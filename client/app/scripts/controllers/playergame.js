@@ -5,9 +5,6 @@ angular.module('clientApp')
 
     $scope.cards = [];
 
-    $scope.cards.push({suit: 'red', value: 13});
-    $scope.cards.push({suit: 'blue', value: 9});
-
     $scope.currentRound = 0;
     $scope.notification = "Waiting for the host to start the game!";
     $scope.isGuessTricksDisabled = true;
@@ -15,8 +12,8 @@ angular.module('clientApp')
     $scope.gameOver   = false;
     $scope.winnerName = '';
 
-    var playedCardThisTrick = false;
-    var isThrowCardsDisabled = true;
+    $scope.playedCardThisTrick = false;
+    $scope.isThrowCardsDisabled = true;
 
     socket.on('newHandCard', function(card) {
       $scope.cards.push(card);
@@ -29,18 +26,18 @@ angular.module('clientApp')
     socket.on('cardNotAllowed', function(card) {
       $scope.notification = "Sorry, card is not allowed: " + card.suit + " " + card.value;
       $scope.cards.push(card);
-      playedCardThisTrick = false;
+      $scope.playedCardThisTrick = false;
     });
 
     socket.on('startNewRound', function(round) {
       $scope.currentRound = round;
       $scope.isGuessTricksDisabled = false;
       $scope.notification = "Please guess your number of tricks.";
-      isThrowCardsDisabled = true;
+      $scope.isThrowCardsDisabled = true;
     });
 
     socket.on('playerHasWonTrick', function(winner) {
-      playedCardThisTrick = false;
+      $scope.playedCardThisTrick = false;
     });
 
     socket.on('playerIsDealer', function() {
@@ -52,7 +49,7 @@ angular.module('clientApp')
     });
 
     socket.on('allTricksGuessed', function() {
-      isThrowCardsDisabled = false;
+      $scope.isThrowCardsDisabled = false;
       $scope.notification = "Game is running!";
     });
 
@@ -65,7 +62,7 @@ angular.module('clientApp')
 
 
     $scope.throwCard = function(card) {
-      if (playedCardThisTrick === false && isThrowCardsDisabled === false) {
+      if ($scope.playedCardThisTrick === false && $scope.isThrowCardsDisabled === false) {
         // Send card to server
         var data = { gameId : gameData.gameId, card : card };
         socket.emit('playerThrowCard', data);
@@ -77,10 +74,13 @@ angular.module('clientApp')
             }
         }
 
-        playedCardThisTrick = true;
+        $scope.playedCardThisTrick = true;
+
+        return true;
       }
       else {
         // TODO: Notify user that he already played a card
+        return false;
       }
     }
 

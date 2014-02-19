@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clientApp', ['hmTouchEvents'])
+angular.module('clientApp', ['ngRoute','hmTouchEvents'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
