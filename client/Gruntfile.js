@@ -127,6 +127,9 @@ module.exports = function (grunt) {
                 }
             }
         },
+        cssmin: {
+
+        },
         useminPrepare: {
             html: '<%= yeoman.app %>/index.html',
             options: {
@@ -140,18 +143,18 @@ module.exports = function (grunt) {
                 dirs: ['<%= yeoman.dist %>']
             }
         },
-        imagemin: {
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: '<%= yeoman.app %>/images',
-                        src: '{,*/}*.{png,jpg,jpeg}',
-                        dest: '<%= yeoman.dist %>/images'
-                    }
-                ]
-            }
-        },
+        // imagemin: {
+        //     dist: {
+        //         files: [
+        //             {
+        //                 expand: true,
+        //                 cwd: '<%= yeoman.app %>/images',
+        //                 src: '{,*/}*.{png,jpg,jpeg}',
+        //                 dest: '<%= yeoman.dist %>/images'
+        //             }
+        //         ]
+        //     }
+        // },
         svgmin: {
             dist: {
                 files: [
@@ -227,7 +230,6 @@ module.exports = function (grunt) {
             ],
             dist: [
                 'copy:styles',
-                'imagemin',
                 'svgmin',
                 'htmlmin'
             ]
@@ -243,13 +245,16 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: '<%= yeoman.dist %>/scripts',
-                        src: '*.js',
+                        src: ['*.js'],
                         dest: '<%= yeoman.dist %>/scripts'
                     }
                 ]
             }
         },
         uglify: {
+            options: {
+                mangle: false
+            },
             dist: {
                 files: {
                     '<%= yeoman.dist %>/scripts/scripts.js': [
@@ -282,6 +287,7 @@ module.exports = function (grunt) {
         'copy:dist',
         'cdnify',
         'ngmin',
+        'cssmin',
         'uglify',
         'rev',
         'usemin'
