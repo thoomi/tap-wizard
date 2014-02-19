@@ -1,4 +1,4 @@
-# Tap Wizard - A web based clone of the card game wizard
+# Tap Wizard
 ## Overview
 
 This game is built on Node.js and Socket.io and is tested to use with Googles Chrome browser. The idea is to use a tablet or a similar screen as the "game board / game table". You can create a new game and others may join that game by entering the game id in the browser on their smartphone. 
