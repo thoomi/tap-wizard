@@ -30,7 +30,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="i in range(round.current)">
+        <tr ng-repeat="i in range(round.current) track by $index">
           <td class="round">{{ $index + 1 }}</td>
           <td ng-repeat="player in players track by $index" class="in-use score-set">
             <div class="scores table full-width full-height">
