@@ -14,9 +14,6 @@ angular.module('clientApp')
         var scrollXStart = 0;
         var parent = element.parent().parent();
 
-        // Init touch event to mouse event matcher
-        //init();
-
         element.css({
           position: 'relative'
         });
