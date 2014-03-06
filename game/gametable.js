@@ -1,4 +1,3 @@
-var Player = require('./player.js').Player;
 var Deck   = require('./deck.js').Deck;
 
 exports.GameTable = function(gameId, host) {
@@ -77,7 +76,7 @@ exports.GameTable = function(gameId, host) {
 
         // Choose trump card
         var trumpCard = m_deck.cards[numberOfdealedCards];
-        if (trumpCard != undefined) {
+        if (trumpCard !== undefined) {
             m_trumpSuit = trumpCard.suit;
             m_host.emit('newTrumpCard', trumpCard);
         }
@@ -161,7 +160,7 @@ exports.GameTable = function(gameId, host) {
 
             // Check if card matches suit suit
             if (m_firstPlayedSuit === card.suit) {
-                return true
+                return true;
             }
 
             // Check if player hasn't a matching suit
@@ -222,7 +221,7 @@ exports.GameTable = function(gameId, host) {
 
     function gameOver() {
         var winner = getGameWinner();
-        if (winner != undefined) {
+        if (winner !== undefined) {
             m_host.emit('gameIsOver', winner.getName());
             emitToPlayers('gameIsOver', winner.getName());
         }
@@ -269,7 +268,7 @@ exports.GameTable = function(gameId, host) {
         m_firstPlayedCard  = null;
         m_firstPlayedSuit = '';
         for (var indexOfPlayer = 0; indexOfPlayer < m_players.length; indexOfPlayer++) {
-            m_players[indexOfPlayer].hasPlayedCard = false;;
+            m_players[indexOfPlayer].hasPlayedCard = false;
         }
     }
 
@@ -277,8 +276,9 @@ exports.GameTable = function(gameId, host) {
         var foolCount  = 0;
         var comparableCards = [];
         var winnerCard = null;
+        var indexOfCard = 0;
 
-        for (var indexOfCard = 0; indexOfCard < m_cardsOnTable.length; indexOfCard++) {
+        for (indexOfCard = 0; indexOfCard < m_cardsOnTable.length; indexOfCard++) {
             if (m_cardsOnTable[indexOfCard].suit === 'wizard') {
                 // Wizard detected
                 setTrickWinner(m_cardsOnTable[indexOfCard].playerId);
@@ -303,38 +303,38 @@ exports.GameTable = function(gameId, host) {
         winnerCard = comparableCards[0];
 
         if (m_trumpSuit === '' || m_trumpSuit === 'wizard' || m_trumpSuit === 'fool') {
-            for (var i = 1; i < comparableCards.length; i++) {
-                // Check if suit is the same
-                if(comparableCards[i].suit === winnerCard.suit) {
+            for (indexOfCard = 1; indexOfCard < comparableCards.length; indexOfCard++) {
+                // Check if suit is equal
+                if(comparableCards[indexOfCard].suit === winnerCard.suit) {
                     // Check if value is higher
-                    if(comparableCards[i].value > winnerCard.value) {
-                        winnerCard = comparableCards[i];
+                    if(comparableCards[indexOfCard].value > winnerCard.value) {
+                        winnerCard = comparableCards[indexOfCard];
                     }
                 }
             }
         }
         else {
-            for (var i = 1; i < comparableCards.length; i++) {
-                // Check if suit is the same
-                if(comparableCards[i].suit === winnerCard.suit) {
+            for (indexOfCard = 1; indexOfCard < comparableCards.length; indexOfCard++) {
+                // Check if suit is equal
+                if(comparableCards[indexOfCard].suit === winnerCard.suit) {
                     // Check if value is higher
-                    if(comparableCards[i].value > winnerCard.value) {
-                        winnerCard = comparableCards[i];
+                    if(comparableCards[indexOfCard].value > winnerCard.value) {
+                        winnerCard = comparableCards[indexOfCard];
                     }
                 }
                 else {
                     // Check if card is a trump
-                    if (comparableCards[i].suit === m_trumpSuit) {
+                    if (comparableCards[indexOfCard].suit === m_trumpSuit) {
                         // Check if current winner card is a trump
                         if (winnerCard.suit === m_trumpSuit) {
                             // Both cards are trumps; Compare the values
-                            if (comparableCards[i].value > winnerCard.value) {
-                                winnerCard = comparableCards[i];
+                            if (comparableCards[indexOfCard].value > winnerCard.value) {
+                                winnerCard = comparableCards[indexOfCard];
                             }
                         }
                         else {
                             // Card is a trump and current winner card is not
-                            winnerCard = comparableCards[i];
+                            winnerCard = comparableCards[indexOfCard];
                         }
                     }
                 }
@@ -367,5 +367,5 @@ exports.GameTable = function(gameId, host) {
         prepareNewGame      : prepareNewGame,
         gameOver            : gameOver,
         getState            : getState
-    }
+    };
 };

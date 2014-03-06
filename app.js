@@ -46,10 +46,10 @@ server.listen(app.get('port'), function(){
 });
 
 
-// Listen for Socket.IO Connections. Once connected, listen to messages.
+// Listen for Socket.IO Connections
 sessionSockets.on('connection', function (err, socket, session) {
 
-    if (err == null && session != undefined) {
+    if (err == null && session !== undefined) {
         console.log('Session: ' +  session.id);
         gameserver.initializeListeners(io, socket, sessionSockets);
     }

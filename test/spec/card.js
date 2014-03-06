@@ -33,6 +33,6 @@ describe('Card', function() {
                 var cardWizard = new Card('wizard', 'W');
                 expect(cardWizard.value).to.be('W');
             });
-        })
+        });
     });
 });

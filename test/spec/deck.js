@@ -33,7 +33,7 @@ describe('Deck', function() {
         describe('#shuffle', function() {
             it('should be a function', function() {
                 expect(newDeck.shuffle).to.be.a('function');
-            })
-        })
+            });
+        });
     });
 });

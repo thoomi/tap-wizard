@@ -9,14 +9,14 @@ exports.Client = function(sessionId) {
 
     publicApi.getId = function() {
         return m_id;
-    }
+    };
 
     publicApi.setSocket = function (socket) {
         m_socket = socket;
-    }
+    };
     publicApi.getSocket = function () {
         return m_socket;
-    }
+    };
 
     publicApi.emit = function (message, data) {
         if (m_socket != null) {
@@ -26,7 +26,7 @@ exports.Client = function(sessionId) {
             console.log('Message not sent!');
             console.log('Socket: ' + m_socket);
         }
-    }
+    };
 
     return publicApi;
 };

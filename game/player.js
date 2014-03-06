@@ -17,14 +17,14 @@ exports.Player = function(sessionId, name) {
     publicApi.addCard = function (card) {
 
         m_setOfCards.push(card);
-    }
+    };
     publicApi.removeCard = function (card) {
         for (var indexOfCard = 0; indexOfCard < m_setOfCards.length; indexOfCard++) {
             if(m_setOfCards[indexOfCard].color === card.color && m_setOfCards[indexOfCard].value === card.value) {
                 m_setOfCards.splice(indexOfCard, 1);
             }
         }
-    }
+    };
 
     publicApi.calculateRoundScore = function (round) {
         var guessedTricks = m_perRoundData[round].guessedTricks;
@@ -43,25 +43,25 @@ exports.Player = function(sessionId, name) {
 
         m_perRoundData[round].score = roundScore;
         m_score += parseInt(roundScore);
-    }
+    };
     publicApi.getRoundScore = function(round) {
 
         return m_perRoundData[round].score;
-    }
+    };
     publicApi.getFullScore = function() {
 
         return m_score;
-    }
+    };
 
     publicApi.setGuessedTricks = function (round, guessedNumber) {
         m_perRoundData[round] = {};
         m_perRoundData[round].guessedTricks = parseInt(guessedNumber);
         m_perRoundData[round].wonTricks     = 0;
-    }
+    };
     publicApi.addWonTrick = function (round) {
 
         m_perRoundData[round].wonTricks++;
-    }
+    };
 
     publicApi.hasCardWithSuit = function (suit) {
         for (var indexOfCard = 0; indexOfCard < m_setOfCards.length; indexOfCard++) {
@@ -70,12 +70,12 @@ exports.Player = function(sessionId, name) {
             }
         }
         return false;
-    }
+    };
 
     publicApi.getName = function () {
 
         return m_name;
-    }
+    };
 
     return publicApi;
 };

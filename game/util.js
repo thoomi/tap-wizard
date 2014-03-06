@@ -6,7 +6,7 @@ var util = module.exports = {};
 util.createRandomNumber = function(_low, _high) {
     _high++;
     return Math.floor((Math.random() * (_high - _low) + _low));
-}
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ util.shuffleArray = function(_array) {
         _array[index]       = _array[randomIndex];
         _array[randomIndex] = tmp;
     }
-}
+};
 
 
 

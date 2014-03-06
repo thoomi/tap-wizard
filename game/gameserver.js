@@ -7,26 +7,7 @@ var sessionSockets;
 
 var gameTables  = {};
 
-/**
-* This function is called by app.js to initialize a new game instance.
-*/
-exports.initializeListeners = function(sio, socket, sSockets) {
-    io = sio;
-    sessionSockets = sSockets;
 
-    //socket.emit('connected', { message: "You are connected!" });
-
-    // Host Events
-    socket.on('hostCreateNewGame', hostCreateNewGame);
-    socket.on('hostPrepareGame', hostPrepareGame);
-    socket.on('hostStartRound', hostStartRound);
-
-    // Player Events
-    socket.on('playerJoinGame', playerJoinGame);
-    socket.on('playerThrowCard', playerThrowCard);
-    socket.on('playerGuessTricks', playerGuessTricks);
-    socket.on('disconnect', disconnect);
-}
 
 /* *******************************
 * *
@@ -41,7 +22,7 @@ function hostCreateNewGame() {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined) {
+        if (err === null && session !== undefined) {
             // Create a new host
             var host = new Host(session.id);
             host.setSocket(socket);
@@ -79,11 +60,11 @@ function hostPrepareGame() {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined && session.gameId != undefined && session.client === 'host') {
+        if (err === null && session !== undefined && session.gameId !== undefined && session.client === 'host') {
 
             var gameTable = gameTables[session.gameId];
 
-            if (gameTable != undefined) {
+            if (gameTable !== undefined) {
                 var data = { maxRounds : gameTable.getNumberOfRounds(), currentRound : gameTable.getCurrentRound() };
                 io.sockets.in(session.gameId).emit('beginNewGame', data);
                 gameTable.prepareNewGame();
@@ -99,11 +80,11 @@ function hostStartRound() {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined && session.gameId != undefined && session.client === 'host') {
+        if (err === null && session !== undefined && session.gameId !== undefined && session.client === 'host') {
 
             var gameTable = gameTables[session.gameId];
 
-            if (gameTable != undefined) {
+            if (gameTable !== undefined) {
                 io.sockets.in(session.gameId).emit('startNewRound', gameTable.getCurrentRound());
                 gameTable.dealCards();
             }
@@ -131,12 +112,12 @@ function playerJoinGame(data) {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined) {
+        if (err === null && session !== undefined) {
             // Look up the room ID in the Socket.IO manager object and the game table in the gameTables object
             var room      = io.sockets.manager.rooms["/" + data.gameId];
             var gameTable = gameTables[data.gameId];
             // If the room and game exists
-            if ( room != undefined && gameTable != undefined ) {
+            if ( room !== undefined && gameTable !== undefined ) {
 
                 // Create a new player
                 var player = new Player(session.id, data.playerName);
@@ -179,11 +160,11 @@ function playerThrowCard(data) {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined && session.gameId != undefined && session.client === 'player') {
+        if (err === null && session !== undefined && session.gameId !== undefined && session.client === 'player') {
 
             var gameTable = gameTables[session.gameId];
 
-            if (gameTable != undefined) {
+            if (gameTable !== undefined) {
                 if (gameTable.isCardAllowed(data.card, session.id)) {
                     gameTable.playCard(data.card, session.id);
                 }
@@ -203,11 +184,11 @@ function playerGuessTricks(data) {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined && session.gameId != undefined && session.client === 'player') {
+        if (err === null && session !== undefined && session.gameId !== undefined && session.client === 'player') {
 
             var gameTable = gameTables[session.gameId];
 
-            if (gameTable != undefined) {
+            if (gameTable !== undefined) {
                 gameTable.playerGuessedTricks(data.guessedTricks, session.id);
             }
         }
@@ -224,17 +205,17 @@ function disconnect() {
     var socket = this;
     // Get session for the socket
     sessionSockets.getSession(socket, function (err, session) {
-        if (err === null && session != undefined && session.gameId != undefined) {
+        if (err === null && session !== undefined && session.gameId !== undefined) {
 
             // Get the game the player or host is in
             var gameTable = gameTables[session.gameId];
 
-            if(gameTable != undefined) {
+            if(gameTable !== undefined) {
                 if(gameTable.host.getId() === session.id) {
                     io.sockets.in(gameTable.gameId).emit('hostDisconnected');
                     gameTable.gameOver();
                     // Delete game table
-                    delete gameTable;
+                    gameTable = null;
                 }
                 else {
                     if (gameTable.getState() === 'waiting') {
@@ -244,7 +225,7 @@ function disconnect() {
                     else {
                         // This is a very, very simple solution for the disconnect problem...
                         gameTable.gameOver();
-                        delete gameTable;
+                        gameTable = null;
                     }
 
                 }
@@ -255,3 +236,26 @@ function disconnect() {
         }
     });
 }
+
+
+
+/**
+* This function is called by app.js to initialize a new game instance.
+*/
+exports.initializeListeners = function(sio, socket, sSockets) {
+    io = sio;
+    sessionSockets = sSockets;
+
+    //socket.emit('connected', { message: "You are connected!" });
+
+    // Host Events
+    socket.on('hostCreateNewGame', hostCreateNewGame);
+    socket.on('hostPrepareGame', hostPrepareGame);
+    socket.on('hostStartRound', hostStartRound);
+
+    // Player Events
+    socket.on('playerJoinGame', playerJoinGame);
+    socket.on('playerThrowCard', playerThrowCard);
+    socket.on('playerGuessTricks', playerGuessTricks);
+    socket.on('disconnect', disconnect);
+};
