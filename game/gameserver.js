@@ -1,12 +1,44 @@
+/* globals GameServer */
 var GameTable  = require('./gametable.js').GameTable;
 var Host       = require('./host.js').Host;
 var Player     = require('./player.js').Player;
 
-var io;
-var sessionSockets;
+var sessionSockets = {};
+var sockIo         = {};
+var gameTables     = {};
 
-var gameTables  = {};
 
+
+/**
+* Module exports
+*/
+module.exports = GameServer;
+
+
+/**
+* Constructor
+*/
+function GameServer(sio, io) {
+    this.sio = sio;
+    sessionSockets = sio;
+    sockIo = io;
+}
+
+GameServer.prototype.setup = function() {
+    var gameServer = this;
+
+    gameServer.sio.on('connection', function (err, socket, session) {
+
+        if (err === null && session !== undefined) {
+            console.log('Session: ' + session.id);
+            gameServer.initializeListeners(socket);
+        }
+        else {
+            // Send error to client
+            socket.emit('error', err);
+        }
+    });
+};
 
 
 /* *******************************
@@ -66,7 +98,7 @@ function hostPrepareGame() {
 
             if (gameTable !== undefined) {
                 var data = { maxRounds : gameTable.getNumberOfRounds(), currentRound : gameTable.getCurrentRound() };
-                io.sockets.in(session.gameId).emit('beginNewGame', data);
+                sockIo.sockets.in(session.gameId).emit('beginNewGame', data);
                 gameTable.prepareNewGame();
             }
         }
@@ -85,7 +117,7 @@ function hostStartRound() {
             var gameTable = gameTables[session.gameId];
 
             if (gameTable !== undefined) {
-                io.sockets.in(session.gameId).emit('startNewRound', gameTable.getCurrentRound());
+                sockIo.sockets.in(session.gameId).emit('startNewRound', gameTable.getCurrentRound());
                 gameTable.dealCards();
             }
         }
@@ -114,7 +146,7 @@ function playerJoinGame(data) {
     sessionSockets.getSession(socket, function (err, session) {
         if (err === null && session !== undefined) {
             // Look up the room ID in the Socket.IO manager object and the game table in the gameTables object
-            var room      = io.sockets.manager.rooms["/" + data.gameId];
+            var room      = sockIo.sockets.manager.rooms["/" + data.gameId];
             var gameTable = gameTables[data.gameId];
             // If the room and game exists
             if ( room !== undefined && gameTable !== undefined ) {
@@ -212,7 +244,7 @@ function disconnect() {
 
             if(gameTable !== undefined) {
                 if(gameTable.host.getId() === session.id) {
-                    io.sockets.in(gameTable.gameId).emit('hostDisconnected');
+                    sockIo.sockets.in(gameTable.gameId).emit('hostDisconnected');
                     gameTable.gameOver();
                     // Delete game table
                     gameTable = null;
@@ -220,7 +252,7 @@ function disconnect() {
                 else {
                     if (gameTable.getState() === 'waiting') {
                         gameTable.removePlayer(session.id);
-                        io.sockets.in(gameTable.gameId).emit('playerLeftGame', session.id);
+                        sockIo.sockets.in(gameTable.gameId).emit('playerLeftGame', session.id);
                     }
                     else {
                         // This is a very, very simple solution for the disconnect problem...
@@ -242,12 +274,7 @@ function disconnect() {
 /**
 * This function is called by app.js to initialize a new game instance.
 */
-exports.initializeListeners = function(sio, socket, sSockets) {
-    io = sio;
-    sessionSockets = sSockets;
-
-    //socket.emit('connected', { message: "You are connected!" });
-
+GameServer.prototype.initializeListeners = function (socket) {
     // Host Events
     socket.on('hostCreateNewGame', hostCreateNewGame);
     socket.on('hostPrepareGame', hostPrepareGame);

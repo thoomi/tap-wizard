@@ -44,8 +44,8 @@ angular.module('clientApp')
 
 angular.module('clientApp')
  .factory('socket', function ($rootScope) {
-        var socket = io.connect('http://wiz.herokuapp.com');
-        //var socket = io.connect('http://localhost:3000');
+        //var socket = io.connect('http://wiz.herokuapp.com');
+        var socket = io.connect('http://localhost:3000');
         return {
             on: function (eventName, callback) {
                 socket.on(eventName, function () {
@@ -429,9 +429,6 @@ angular.module('clientApp')
         var startX = 0, startY = 0, x = 0, y = 0;
         var scrollXStart = 0;
         var parent = element.parent().parent();
-
-        // Init touch event to mouse event matcher
-        //init();
 
         element.css({
           position: 'relative'
