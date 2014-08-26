@@ -1,3 +1,5 @@
+DEPRECATED: This repository has been split into tap-wizard-client and tap-wizard-server. Please use them for reference.
+
 ## Idea
 
 The main idea behind TapWizard was to develop a game which should renovate the old 
